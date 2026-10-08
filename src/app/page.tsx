@@ -7,7 +7,9 @@ export default async function HomePage() {
   const projects = await getProjects();
 
   // Même ordre que la navigation. Les ports restent croissants, comme dans une vraie
-  // sortie nmap : 80 et 443 pour le web, 514 (syslog) pour l'historique, 587 pour le courrier.
+  // sortie nmap, et chacun est un clin d'œil : 80 et 443 pour le web, 514 (syslog) pour le
+  // journal des expériences, 636 (LDAPS, l'annuaire) pour la formation, 4444 (le port
+  // d'écoute par défaut de netcat et Metasploit) pour le contact.
   const rows: ScanRow[] = [
     {
       port: "80/tcp",
@@ -23,12 +25,18 @@ export default async function HomePage() {
     },
     {
       port: "514/tcp",
-      service: "parcours",
-      href: "/parcours",
+      service: "experience",
+      href: "/experience",
+      detail: "société, saison, bénévolat",
+    },
+    {
+      port: "636/tcp",
+      service: "formation",
+      href: "/formation",
       detail: `${siteConfig.school}, ${siteConfig.year}`,
     },
     {
-      port: "587/tcp",
+      port: "4444/tcp",
       service: "contact",
       href: "/contact",
       detail: "m'écrire, GitHub, LinkedIn",

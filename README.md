@@ -24,7 +24,7 @@ npm run dev        # http://localhost:3000
 | Changer mon identité, mes liens    | `src/config/site.ts`                  |
 | Ajouter un projet                  | `src/content/projects/<slug>.mdx`     |
 | Modifier la matrice de compétences | `src/content/skills.ts`               |
-| Modifier mon parcours              | `src/content/timeline.ts`             |
+| Modifier expérience et formation   | `src/content/timeline.ts`             |
 | Changer couleurs et polices        | `src/app/globals.css` (bloc `@theme`) |
 
 ### Ajouter un projet

@@ -21,7 +21,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageHeader title="Contact" command={`nc -v ${siteConfig.handle} 587`}>
+      <PageHeader title="Contact" command="nc -lvnp 4444">
         Une question, une proposition ou un challenge à partager : écris-moi.
       </PageHeader>
 
