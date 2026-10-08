@@ -21,8 +21,7 @@ export default function AdminPage() {
       </pre>
       <p className="mt-8">
         Bien vu. Un <code className="font-mono text-sm">robots.txt</code> n&apos;a jamais protégé
-        quoi que ce soit : il indique surtout où regarder. Ici, il n&apos;y a rien à administrer, le
-        site est entièrement statique.
+        quoi que ce soit : il indique surtout où regarder. Ici, il n&apos;y a rien à administrer.
       </p>
       <p className="mt-4">
         Si tu es arrivé jusqu&apos;ici, on a sûrement des choses à se dire.{" "}

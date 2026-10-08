@@ -10,6 +10,8 @@ export const siteConfig = {
   role: "Élève ingénieur en informatique",
   school: "EILCO",
   city: "Calais",
+  /** Affiché sur la page Contact. */
+  locations: "Calais et Bordeaux, France",
   year: "ING2",
   description:
     "Alix-Pierre Pestourie, élève ingénieur en informatique à l'EILCO (Calais), en deuxième année du cycle ingénieur. Orientation cybersécurité.",

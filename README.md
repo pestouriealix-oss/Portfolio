@@ -52,11 +52,12 @@ Ajoute `draft: true` tant qu'une fiche est incomplète : un bandeau l'indique et
 
 ## Choix d'architecture
 
-- **Tout est statique.** Chaque page est pré-rendue au build ; le seul composant client est la navigation (page active).
+- **Presque tout est statique.** Chaque page est pré-rendue au build ; les seuls composants client sont la navigation (page active) et le formulaire de contact.
 - **Contenu dans Git.** Pas de base de données ni de CMS : les projets sont des fichiers MDX typés.
 - **Aucune ressource tierce.** Les polices sont auto-hébergées (`@fontsource`), ce qui permet une CSP en `'self'`.
 - **En-têtes de sécurité** définis dans `next.config.ts` : CSP, HSTS, `nosniff`, `frame-ancestors 'none'`, Permissions-Policy.
   `script-src` garde `'unsafe-inline'` : une CSP à nonce imposerait un rendu dynamique. C'est le compromis à lever en priorité si le site devient dynamique.
+- **Formulaire de contact** : Server Action validée par Zod, champ piège anti-robots, limite de débit par IP, envoi par l'API HTTP de Resend. La clé `RESEND_API_KEY` ne quitte jamais le serveur.
 - **`/.well-known/security.txt`** (RFC 9116) généré depuis la configuration.
 
 ## Déployer

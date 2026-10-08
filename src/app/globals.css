@@ -144,3 +144,42 @@
   color: var(--color-dim);
   font-weight: 500;
 }
+
+/* Pac-Man du formulaire de contact : la bouche reste entrouverte, et mâche pendant la frappe. */
+.pacman-jaw-top,
+.pacman-jaw-bottom {
+  transform-origin: 8px 8px;
+}
+.pacman-jaw-top {
+  transform: rotate(-25deg);
+}
+.pacman-jaw-bottom {
+  transform: rotate(25deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pacman-eating .pacman-jaw-top {
+    animation: pacman-chomp-top 0.35s ease-in-out infinite alternate;
+  }
+  .pacman-eating .pacman-jaw-bottom {
+    animation: pacman-chomp-bottom 0.35s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes pacman-chomp-top {
+  from {
+    transform: rotate(-32deg);
+  }
+  to {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes pacman-chomp-bottom {
+  from {
+    transform: rotate(32deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
