@@ -21,7 +21,7 @@ export const siteConfig = {
   links: {
     email: "pestouriealix@gmail.com" as string | null,
     github: "https://github.com/pestouriealix-oss" as string | null,
-    linkedin: "https://www.linkedin.com/in/alix-pestourie-343969331/" as string | null,
+    linkedin: "https://www.linkedin.com/in/alix-pierre-pestourie-343969331/" as string | null,
   },
 } as const;
 
