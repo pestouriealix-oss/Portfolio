@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     url: "/",
   },
+  // L'image d'aperçu vient de src/app/opengraph-image.png (convention de fichier Next.js).
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#0f1424" };

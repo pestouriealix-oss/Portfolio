@@ -14,7 +14,7 @@ export const siteConfig = {
   locations: "Calais et Bordeaux, France",
   year: "ING2",
   description:
-    "Alix-Pierre Pestourie, élève ingénieur en informatique à l'EILCO (Calais), en deuxième année du cycle ingénieur. Orientation cybersécurité.",
+    "Alix-Pierre Pestourie, élève ingénieur en informatique à l'EILCO (Calais), en deuxième année du cycle ingénieur.",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
   /** Exemple : "Stage de 3 mois à partir de juin 2027". */
   availability: null as string | null,

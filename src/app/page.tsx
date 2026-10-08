@@ -53,7 +53,7 @@ export default async function HomePage() {
         </h1>
         <p className="mt-6 text-lg text-dim sm:text-xl">
           Élève ingénieur en informatique à l&apos;{siteConfig.school}, à {siteConfig.city}. Je suis
-          en deuxième année du cycle ingénieur et je m&apos;oriente vers la cybersécurité.
+          en deuxième année du cycle ingénieur.
         </p>
         {siteConfig.availability ? (
           <p className="mt-4 border-l-2 border-amber pl-4 text-text">{siteConfig.availability}</p>

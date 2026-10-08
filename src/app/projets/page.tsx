@@ -22,25 +22,54 @@ export default async function ProjectsPage() {
 
       <ul className="border-t border-line">
         {projects.map(({ slug, meta }) => (
-          <li key={slug} className="border-b border-line">
-            <Link
-              href={`/projets/${slug}`}
-              className="group grid gap-x-8 gap-y-2 py-6 hover:bg-panel sm:grid-cols-[8.5rem_1fr_auto] sm:px-4"
-            >
-              <span className="font-mono text-sm text-dim">{meta.id}</span>
-              <span>
-                <span className="block text-lg font-semibold underline-offset-4 group-hover:text-amber group-hover:underline">
+          <li
+            key={slug}
+            className="grid gap-x-8 gap-y-2 border-b border-line py-7 sm:grid-cols-[8.5rem_1fr_auto]"
+          >
+            <span className="font-mono text-sm text-dim">{meta.id}</span>
+            <div>
+              <h2 className="text-lg font-semibold">
+                <Link
+                  href={`/projets/${slug}`}
+                  className="underline-offset-4 hover:text-amber hover:underline"
+                >
                   {meta.title}
-                </span>
-                <span className="mt-1 block text-dim">{meta.summary}</span>
-                {meta.stack.length > 0 ? (
-                  <span className="mt-3 block font-mono text-xs text-dim">
-                    {meta.stack.join(", ")}
-                  </span>
+                </Link>
+              </h2>
+              <p className="mt-1 text-dim">{meta.summary}</p>
+
+              {meta.stack.length > 0 ? (
+                <ul aria-label="Technologies" className="mt-4 flex flex-wrap gap-2">
+                  {meta.stack.map((tech) => (
+                    <li
+                      key={tech}
+                      className="border border-line px-2 py-0.5 font-mono text-xs text-dim"
+                    >
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              <p className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+                {meta.repo ? (
+                  <a
+                    href={meta.repo}
+                    rel="noopener noreferrer"
+                    className="border border-amber px-3 py-1.5 font-semibold text-amber transition-colors hover:bg-amber hover:text-ink"
+                  >
+                    Voir sur GitHub
+                  </a>
                 ) : null}
-              </span>
-              <span className="text-sm text-dim">{meta.status}</span>
-            </Link>
+                <Link
+                  href={`/projets/${slug}`}
+                  className="text-text underline underline-offset-4 hover:text-amber"
+                >
+                  Lire l&apos;étude de cas
+                </Link>
+              </p>
+            </div>
+            <span className="text-sm text-dim">{meta.status}</span>
           </li>
         ))}
       </ul>

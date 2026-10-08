@@ -55,6 +55,28 @@ export default async function ProjectPage({ params }: Props) {
           </p>
         ) : null}
 
+        {meta.repo || meta.report ? (
+          <p className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            {meta.repo ? (
+              <a
+                href={meta.repo}
+                rel="noopener noreferrer"
+                className="border border-amber bg-amber px-4 py-2 font-semibold text-ink transition-opacity hover:opacity-90"
+              >
+                Voir le code sur GitHub
+              </a>
+            ) : null}
+            {meta.report ? (
+              <a
+                href={meta.report}
+                className="border border-line px-4 py-2 font-semibold transition-colors hover:border-amber hover:text-amber"
+              >
+                Lire le rapport (PDF)
+              </a>
+            ) : null}
+          </p>
+        ) : null}
+
         <dl className="mt-8 grid max-w-3xl gap-x-10 gap-y-4 text-sm sm:grid-cols-[auto_auto_1fr]">
           <div>
             <dt className="text-dim">Statut</dt>
@@ -72,30 +94,6 @@ export default async function ProjectPage({ params }: Props) {
             <div>
               <dt className="text-dim">Technologies</dt>
               <dd>{meta.stack.join(", ")}</dd>
-            </div>
-          ) : null}
-          {meta.repo ? (
-            <div>
-              <dt className="text-dim">Code source</dt>
-              <dd>
-                <a
-                  href={meta.repo}
-                  rel="noopener noreferrer"
-                  className="text-amber underline underline-offset-4"
-                >
-                  Voir le dépôt
-                </a>
-              </dd>
-            </div>
-          ) : null}
-          {meta.report ? (
-            <div>
-              <dt className="text-dim">Rapport</dt>
-              <dd>
-                <a href={meta.report} className="text-amber underline underline-offset-4">
-                  Lire le rapport (PDF)
-                </a>
-              </dd>
             </div>
           ) : null}
         </dl>
