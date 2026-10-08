@@ -1,0 +1,35 @@
+export const metadata = {
+  id: "PRJ-2026-03",
+  title: "Application de capture de liens Instagram",
+  summary:
+    "Une app mobile qui récupère les liens reçus en message privé sur Instagram, les classe et permet de les retrouver.",
+  status: "En cours",
+  stack: ["iOS", "PostgreSQL"],
+};
+
+## Problème
+
+Beaucoup de créateurs envoient leurs ressources par message privé : on commente un mot-clé sous
+une publication, une automatisation répond avec un lien. Ces liens s'empilent dans la messagerie
+et je ne les retrouve jamais.
+
+## Ce que fait l'application
+
+1. Capturer le lien au moment où je le reçois, depuis le menu de partage d'iOS.
+2. Le comprendre automatiquement : titre, catégorie, tags, résumé.
+3. L'organiser en catégories et en collections.
+4. Le retrouver par une recherche plein texte.
+
+L'utilisateur ne saisit rien à la main.
+
+## Choix techniques
+
+- iPhone d'abord. Un site web viendra ensuite compléter l'application, puis Android.
+- Un pipeline d'ingestion extensible : chaque type de ressource a son propre gestionnaire, sans
+  cas particuliers codés en dur.
+- Recherche plein texte PostgreSQL pour la première version, recherche sémantique plus tard.
+- Aucun scraping ni contournement qui exposerait les comptes des utilisateurs.
+
+## État d'avancement
+
+Phase de cadrage : cahier des charges et architecture. Le développement n'a pas commencé.

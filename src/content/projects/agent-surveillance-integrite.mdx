@@ -1,0 +1,26 @@
+export const metadata = {
+  id: "PRJ-2026-04",
+  title: "Agent de surveillance d'intégrité de fichiers",
+  summary:
+    "Un agent FIM (File Integrity Monitor) qui détecte toute modification de fichiers sensibles sur une machine.",
+  status: "Planifié",
+  stack: [],
+  draft: true,
+};
+
+## Objectif
+
+Un attaquant qui compromet une machine modifie presque toujours des fichiers : configuration,
+binaires, tâches planifiées. Un FIM enregistre l'empreinte des fichiers surveillés, puis signale
+tout écart par rapport à cet état de référence.
+
+## Questions à trancher
+
+- Le langage et les systèmes visés.
+- La détection : analyse périodique ou événements du noyau en temps réel.
+- La protection de la base d'empreintes, qu'un attaquant chercherait à réécrire.
+- La remontée des alertes.
+
+## État d'avancement
+
+Projet à venir. Cette fiche sera complétée au fil du développement.

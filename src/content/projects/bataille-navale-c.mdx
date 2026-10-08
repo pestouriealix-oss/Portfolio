@@ -1,0 +1,74 @@
+export const metadata = {
+  id: "PRJ-2025-01",
+  title: "Bataille navale en C",
+  summary:
+    "Un jeu de bataille navale en console, écrit en C à trois : deux modes de jeu, un adversaire à trois niveaux et des sauvegardes binaires.",
+  date: "2026-01-11",
+  status: "Terminé",
+  stack: ["C", "Git"],
+  repo: "https://github.com/pestouriealix-oss/Bataille-navale",
+};
+
+## Contexte
+
+Projet du module d'algorithmique avancée et programmation, en première année à l'EILCO. Nous
+étions trois, sur quatorze semaines, d'octobre 2025 à janvier 2026.
+
+Le cahier des charges imposait l'allocation dynamique de la mémoire, des structures, des
+fichiers binaires pour la sauvegarde, une compilation modulaire et un code qui compile sans
+avertissement avec `-Wall -Wextra`.
+
+## Ce que fait le jeu
+
+- Une grille de 10 × 10 et une flotte de cinq navires par joueur.
+- Deux modes : joueur contre joueur sur le même terminal, ou joueur contre l'ordinateur.
+- Deux grilles par joueur : celle de ses navires, et celle de ses tirs, qui ne montre de
+  l'adversaire que ce qui a déjà été touché.
+- Sauvegarde et reprise d'une partie.
+
+## Architecture
+
+Environ 2 500 lignes réparties en modules, chacun avec une seule responsabilité :
+
+```text
+                 main.c
+                    │
+              affichage  (menus, couleurs, saisies)
+                    │
+                  jeu     (tours, victoire, adversaire)
+        ┌───────────┼───────────┐
+     grille      bateau     sauvegarde
+```
+
+## Ma contribution
+
+J'ai écrit le cœur logique du jeu : les modules `grille` et `bateau`.
+
+- **Les grilles** : allocation, initialisation et libération des plateaux, et résolution d'un
+  tir sur une case.
+- **La flotte** : la structure d'un navire, son état (intact, touché, coulé) et la détection de
+  la fin de partie.
+- **Le placement des navires** : la fonction la plus délicate. Avant d'écrire quoi que ce soit
+  dans la grille, elle vérifie que la case de départ existe, que le navire ne dépasse pas du
+  plateau selon son orientation, et qu'aucune de ses cases n'est déjà occupée. Sans cette
+  simulation préalable, un navire à moitié posé pourrait corrompre la grille.
+
+Mes deux coéquipiers ont pris en charge la boucle de jeu, l'interface, la sauvegarde et les
+stratégies de l'ordinateur.
+
+## L'adversaire
+
+L'ordinateur a trois niveaux. Le premier tire au hasard. Le deuxième mémorise ses tirs : dès
+qu'il touche un navire, il vise les cases voisines jusqu'à le couler. Le troisième lit
+directement la grille adverse, ce qui nous a surtout servi pour les tests.
+
+## Ce que j'en retiens
+
+- **La mémoire** : chaque `malloc` a son `free`, et il a fallu déboguer plusieurs erreurs de
+  segmentation avant d'obtenir un programme sans fuite.
+- **Le travail à trois sur le même code** : des conventions de nommage communes et des points
+  réguliers pour que les modules s'emboîtent.
+
+## Pour aller plus loin
+
+Un mode réseau en sockets TCP/IP, pour jouer depuis deux machines.

@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Référence visuelle : un terminal à phosphore ambre posé sur un
+ * fond bleu nuit, plutôt que le vert "hacker" attendu.
+ */
+@theme {
+  --color-ink: #0f1424;
+  --color-panel: #171d33;
+  --color-line: #2a3252;
+  --color-text: #e4e8f4;
+  --color-dim: #939bb8;
+  --color-amber: #ffb454;
+  --color-open: #7be0c3;
+  --color-alert: #ff6b7a;
+
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Martian Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink);
+  }
+
+  body {
+    background: var(--color-ink);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-amber);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/*
+ * Seule animation non déclenchée par l'utilisateur : les lignes du scan
+ * apparaissent l'une après l'autre au chargement. Le contenu est visible par
+ * défaut ; l'animation n'est ajoutée que si l'utilisateur n'a pas demandé à
+ * réduire les mouvements.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .scan-line {
+    animation: scan-reveal 60ms linear both;
+    animation-delay: calc(var(--i, 0) * 130ms + 200ms);
+  }
+
+  .scan-cursor {
+    animation: scan-blink 1.1s steps(1) infinite;
+  }
+}
+
+/* `both` applique l'état initial pendant le délai : sans animation, la ligne reste visible. */
+@keyframes scan-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scan-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Corps des études de cas (MDX). */
+.prose {
+  max-width: 68ch;
+}
+.prose > * + * {
+  margin-top: 1.1rem;
+}
+.prose h2 {
+  margin-top: 2.75rem;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-amber);
+}
+.prose h2::before {
+  content: "## ";
+  color: var(--color-dim);
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
+}
+.prose ul {
+  list-style: square;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.35rem;
+}
+.prose li::marker {
+  color: var(--color-dim);
+}
+.prose a {
+  color: var(--color-amber);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+.prose pre {
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  background: var(--color-panel);
+  padding: 1rem 1.25rem;
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.75rem 1rem 0.75rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  color: var(--color-dim);
+  font-weight: 500;
+}

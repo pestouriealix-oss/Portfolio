@@ -1,0 +1,55 @@
+export const metadata = {
+  id: "PRJ-2026-02",
+  title: "Refonte du site d'une base de canoë",
+  summary:
+    "Nouvelle version du site d'une base de canoë, pour un ami : site vitrine bilingue, réservation en ligne et espace d'administration.",
+  date: "2026-06-01",
+  status: "Terminé",
+  stack: ["TypeScript", "React", "TanStack Start", "Supabase", "Stripe"],
+  repo: "https://github.com/pestouriealix-oss/Refonte_Canoe",
+};
+
+## Contexte
+
+Un ami gère une base de location de canoës et de vélos en Dordogne. Son site vieillissait et
+les réservations passaient par un service externe. J'ai conçu une nouvelle version qui
+regroupe tout au même endroit.
+
+## Ce que fait le site
+
+- **Vitrine** en français et en anglais : parcours, formules, accès, avis, FAQ.
+- **Réservation** : calendrier des disponibilités par activité, calcul du prix, paiement en
+  ligne ou sur place.
+- **Administration** : suivi des réservations, gestion des activités et du stock par jour.
+
+## Ce qui a changé visuellement
+
+| Avant                                                                 | Après                                                                            |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Un menu de neuf entrées, qui s'étale sur trois lignes en haut de page | Sept entrées sur une ligne, repliées dans un menu sur téléphone                  |
+| Un titre jaune posé directement sur la photo, difficile à lire        | Un grand titre clair sur une photo assombrie                                     |
+| Plusieurs polices et couleurs vives sans lien entre elles             | Deux polices et une palette de trois teintes : bleu rivière, pierre claire, ocre |
+| La réservation renvoie vers un service externe                        | La réservation se fait dans le site                                              |
+| Un site en français uniquement                                        | Un bouton pour passer du français à l'anglais                                    |
+
+Sur téléphone, une barre fixe en bas de l'écran garde toujours à portée les deux actions qui
+comptent pour un client : appeler et réserver.
+
+## Choix techniques
+
+- React et TypeScript, avec TanStack Start pour le routage et les fonctions serveur.
+- Supabase pour la base PostgreSQL et l'authentification. Les règles d'accès sont dans la
+  base elle-même : un visiteur peut créer une réservation, seul un administrateur peut les
+  lire.
+- Stripe Checkout pour le paiement.
+
+## Ce qu'il reste à durcir
+
+En relisant le code avant de le publier, j'ai noté quatre points à corriger avant une mise en
+production. Les deux principaux : le webhook de paiement ne vérifie pas la signature des
+événements qu'il reçoit, et le premier compte créé devient administrateur.
+
+## État d'avancement
+
+La nouvelle version est prête à l'état de prototype. Elle n'est pas encore en ligne : le site
+actuel n'a pas été remplacé.
