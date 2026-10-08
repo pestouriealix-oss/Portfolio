@@ -88,6 +88,16 @@ export default async function ProjectPage({ params }: Props) {
               </dd>
             </div>
           ) : null}
+          {meta.report ? (
+            <div>
+              <dt className="text-dim">Rapport</dt>
+              <dd>
+                <a href={meta.report} className="text-amber underline underline-offset-4">
+                  Lire le rapport (PDF)
+                </a>
+              </dd>
+            </div>
+          ) : null}
         </dl>
       </header>
 

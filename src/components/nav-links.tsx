@@ -2,14 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { PixelIcon, type PixelIconName } from "@/components/pixel-icon";
 import { navigation } from "@/config/site";
 
-/** Seul composant client du site : il lit l'URL pour marquer la page active. */
+/** Icône affichée sous le menu, selon la page. */
+function iconFor(pathname: string): PixelIconName | null {
+  if (pathname === "/") return "invader";
+  if (pathname.startsWith("/projets")) return "tetris";
+  if (pathname.startsWith("/competences")) return "heart";
+  if (pathname.startsWith("/experience")) return "coin";
+  if (pathname.startsWith("/formation")) return "snake";
+  if (pathname.startsWith("/contact")) return "ghost";
+  return null;
+}
+
+/** Composant client : il lit l'URL pour marquer la page active et choisir l'icône. */
 export function NavLinks() {
   const pathname = usePathname();
+  const icon = iconFor(pathname);
 
   return (
-    <nav aria-label="Navigation principale">
+    <nav aria-label="Navigation principale" className="flex flex-col items-end gap-2">
       <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
         {navigation.map(({ href, label }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
@@ -30,6 +43,7 @@ export function NavLinks() {
           );
         })}
       </ul>
+      {icon ? <PixelIcon name={icon} /> : null}
     </nav>
   );
 }

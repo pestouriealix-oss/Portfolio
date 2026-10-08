@@ -27,6 +27,11 @@ const projectSchema = z.object({
   status: z.enum(projectStatuses),
   stack: z.array(z.string().min(1)),
   repo: z.url().optional(),
+  /** Chemin d'un rapport PDF placé dans `public/`, par exemple `/rapports/mon-rapport.pdf`. */
+  report: z
+    .string()
+    .regex(/^\/rapports\/[a-z0-9-]+\.pdf$/, "Chemin attendu : /rapports/nom.pdf")
+    .optional(),
   /** Fiche incomplète : un bandeau l'indique et la page n'est pas indexée. */
   draft: z.boolean().default(false),
 });
