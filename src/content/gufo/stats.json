@@ -1,0 +1,10 @@
+{
+  "measuredAt": "2026-11-07",
+  "linesOfCode": 24455,
+  "tests": 231,
+  "testFiles": 41,
+  "pages": 21,
+  "apiRoutes": 6,
+  "tables": 20,
+  "migrations": 14
+}

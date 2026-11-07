@@ -65,6 +65,23 @@ Ajoute `draft: true` tant qu'une fiche est incomplète : un bandeau l'indique et
 
 Les briques disponibles dans un fichier MDX, sans import : `Pitch` (problème, question, réponse), `Figures` (chiffres mesurés, avec leur source), `Flow` (chaîne d'étapes), `Choices` (choix d'ingénieur), `Caption`, `Note`, et pour Gufo `DraftDemo` et `GufoPlan`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
 
+### Mettre à jour la fiche Gufo
+
+Le plan du code et les chiffres de Gufo ne sont pas écrits à la main : ils viennent de `src/content/gufo/plan.json` et `stats.json`. Quand Gufo évolue :
+
+1. Régénère la carte du code de Gufo, puis exporte-la avec le bouton « Export » (un fichier HTML).
+2. Lance, depuis ce dépôt :
+
+   ```bash
+   npm run gufo:sync -- --plan ~/Downloads/gufo-map.html --repo ~/ProjetLol
+   ```
+
+   `--plan` relit les blocs, les services et les parcours de la carte ; `--repo` compte les lignes, les tests (avec Vitest), les pages, les tables et les migrations. Les deux options sont indépendantes.
+
+3. Relis le diff des deux fichiers JSON, commite et pousse : Vercel redéploie la fiche.
+
+Rien n'est lu au moment du build : le site ne dépend ni de la carte ni du dépôt de Gufo.
+
 ## Choix d'architecture
 
 - **Presque tout est statique.** Chaque page est pré-rendue au build. Les composants client se limitent à ce qui réagit : la barre de navigation (page active, progression du défilement), le formulaire de contact, la relance du scan et les deux démos de la fiche Gufo.

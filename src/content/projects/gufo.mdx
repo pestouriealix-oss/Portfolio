@@ -1,3 +1,5 @@
+import { gufoFigures } from "@/content/gufo";
+
 export const metadata = {
   id: "PRJ-2026-05",
   title: "Gufo",
@@ -58,24 +60,16 @@ simultanés : les conditions de victoire de la partie, et le duel contre ton vis
 
 ## En chiffres
 
-<Figures
-  items={[
-    { value: "24 455", label: "lignes de TypeScript, hors tests" },
-    { value: "220", label: "tests automatisés, dans 41 fichiers", accent: true },
-    { value: "21", label: "pages, dont l'esport, les actus et la progression" },
-    { value: "20", label: "tables PostgreSQL, créées par 14 migrations" },
-  ]}
-  source="Compté dans le dépôt le 7 novembre 2026."
-/>
+{/* Chiffres et plan régénérés par `npm run gufo:sync` : voir src/content/gufo. */}
+
+<Figures items={gufoFigures.items} source={gufoFigures.source} />
 
 ## Le plan du code
 
-Gufo tient en neuf blocs sur trois étages : les écrans, le métier, puis les comptes et la base.
-Choisis un parcours pour le suivre étape par étape.
+Le code de Gufo se range en étages : les écrans, le métier, puis les comptes et la base. Choisis
+un parcours pour le suivre étape par étape.
 
 <GufoPlan />
-
-<Caption>D'après la carte du dépôt, générée le 5 novembre 2026.</Caption>
 
 ## Des faits d'abord, le modèle ensuite
 

@@ -2,6 +2,7 @@ import { Container } from "@/components/container";
 import { ProjectCard } from "@/components/project-card";
 import { ScanOutput, type ScanRow } from "@/components/scan-output";
 import { siteConfig } from "@/config/site";
+import { formatNumber, gufoLinesRounded, gufoStats } from "@/content/gufo";
 import { skillDomains } from "@/content/skills";
 import { getProjects } from "@/lib/projects";
 import { delay } from "@/lib/style";
@@ -92,8 +93,8 @@ export default async function HomePage() {
           <strong className="font-semibold text-text">
             le développement full-stack, Linux et les réseaux
           </strong>
-          . Mon plus gros projet, Gufo, est un coach League of Legends : 24 000 lignes de TypeScript
-          et 220 tests automatisés.
+          . Mon plus gros projet, Gufo, est un coach League of Legends : {gufoLinesRounded} lignes
+          de TypeScript et {formatNumber(gufoStats.tests)} tests automatisés.
         </p>
 
         <dl className="rise mt-11 grid gap-3 sm:grid-cols-3" style={delay(3)}>

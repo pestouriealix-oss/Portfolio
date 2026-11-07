@@ -1,192 +1,38 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { formatDay, gufoPlan, type PlanBlock as Block } from "@/content/gufo";
 
 /**
- * Plan du code de Gufo, interactif. Les blocs, les services et les trois
- * parcours viennent de la carte du dépôt (Gufo map, générée le 5 novembre 2026) :
- * on choisit un parcours, et ses étapes s'allument une à une sur le plan.
+ * Plan du code de Gufo, interactif. Les blocs, les services et les parcours
+ * viennent de la carte du code (src/content/gufo/plan.json, régénéré par
+ * `npm run gufo:sync`) : quand Gufo évolue, le plan suit sans toucher à ce
+ * composant. On choisit un parcours, et ses étapes s'allument une à une.
  *
  * Accessible sans la souris : les parcours et les étapes sont des boutons, et
  * l'étape en cours est annoncée. Si l'utilisateur a demandé à réduire les
  * animations, rien ne défile tout seul.
  */
-type NodeId =
-  | "web"
-  | "api"
-  | "coach"
-  | "game"
-  | "content"
-  | "account"
-  | "data"
-  | "jobs"
-  | "tests"
-  | "claude"
-  | "riot"
-  | "ddragon"
-  | "pandascore"
-  | "rss"
-  | "paddle"
-  | "resend"
-  | "postgres"
-  | "github";
-
-type Block = { id: NodeId; name: string; text: string };
-
-const LAYERS: { name: string; blocks: Block[] }[] = [
-  {
-    name: "Écrans",
-    blocks: [
-      {
-        id: "web",
-        name: "Le site (écrans)",
-        text: "21 pages : tableau de bord, draft, parties, esport, actus, Premium, Paramètres.",
-      },
-      {
-        id: "api",
-        name: "Adresses du serveur",
-        text: "6 routes : connexion, fiche, bilan, paiement, Riot Sign On.",
-      },
-    ],
-  },
-  {
-    name: "Métier",
-    blocks: [
-      {
-        id: "coach",
-        name: "Coach IA",
-        text: "Prépare les faits, fait écrire la fiche et le bilan, compte les coûts et les quotas.",
-      },
-      {
-        id: "game",
-        name: "Données du jeu",
-        text: "Appels à Riot, images Data Dragon, synchronisation des parties, statistiques.",
-      },
-      {
-        id: "content",
-        name: "Esport et actus",
-        text: "Compétitions sur PandaScore, articles lus dans des flux RSS publics.",
-      },
-    ],
-  },
-  {
-    name: "Socle",
-    blocks: [
-      {
-        id: "account",
-        name: "Comptes, accès et paiement",
-        text: "Connexion, droits selon l'offre, abonnement Paddle, e-mails.",
-      },
-      {
-        id: "data",
-        name: "Base de données",
-        text: "20 tables PostgreSQL, une porte d'accès par sujet.",
-      },
-    ],
-  },
-];
-
-const SERVICES: { id: NodeId; name: string }[] = [
-  { id: "claude", name: "Claude" },
-  { id: "riot", name: "API Riot" },
-  { id: "ddragon", name: "Data Dragon" },
-  { id: "pandascore", name: "PandaScore" },
-  { id: "rss", name: "Flux RSS" },
-  { id: "paddle", name: "Paddle" },
-  { id: "resend", name: "Resend" },
-  { id: "postgres", name: "PostgreSQL" },
-  { id: "github", name: "GitHub Actions" },
-];
-
-const AROUND: Block[] = [
-  {
-    id: "jobs",
-    name: "Tâches et scripts",
-    text: "Collecte nocturne des duels sur GitHub Actions, suivi du coût du modèle.",
-  },
-  { id: "tests", name: "Tests", text: "220 tests Vitest, rangés à côté du code qu'ils vérifient." },
-];
-
-type Step = { node: NodeId; text: string };
-/** Un parcours a au moins une étape, et la liste au moins un parcours : le type le garantit. */
-type Journey = { id: string; name: string; steps: [Step, ...Step[]] };
-
-const JOURNEYS: [Journey, ...Journey[]] = [
-  {
-    id: "draft",
-    name: "Fiche de draft",
-    steps: [
-      {
-        node: "web",
-        text: "La draft se remplit seule depuis la partie en cours, et le joueur demande la fiche.",
-      },
-      { node: "api", text: "Le serveur vérifie la connexion et le quota du jour." },
-      {
-        node: "coach",
-        text: "Le coach rassemble les faits : sorts des champions, taux de victoire, duel déjà écrit.",
-      },
-      {
-        node: "game",
-        text: "Les statistiques de duels, comptées sur de vraies parties classées, sont jointes.",
-      },
-      {
-        node: "coach",
-        text: "Deux demandes partent en même temps : conditions de victoire et duel.",
-      },
-      { node: "claude", text: "Claude écrit la fiche, affichée morceau par morceau." },
-      { node: "data", text: "La fiche, le duel et le coût de l'appel sont enregistrés." },
-    ],
-  },
-  {
-    id: "review",
-    name: "Bilan d'une partie",
-    steps: [
-      { node: "web", text: "Sur le tableau de bord, le joueur clique « Mettre à jour »." },
-      { node: "game", text: "Le site va chercher les nouvelles parties du compte." },
-      {
-        node: "riot",
-        text: "Riot renvoie l'historique, le détail et la chronologie de chaque partie.",
-      },
-      { node: "data", text: "Les parties sont enregistrées en base." },
-      { node: "api", text: "Sur la page d'une partie, « Écrire mon bilan » demande l'analyse." },
-      {
-        node: "coach",
-        text: "Seuls des faits calculés sont donnés au modèle : écarts à 10 et 15 minutes, morts, objectifs.",
-      },
-      {
-        node: "claude",
-        text: "Claude écrit ce qui a marché, ce qui a coûté et comment progresser.",
-      },
-    ],
-  },
-  {
-    id: "premium",
-    name: "Passage en Premium",
-    steps: [
-      { node: "web", text: "Le joueur clique sur le bouton de paiement de la page Premium." },
-      {
-        node: "paddle",
-        text: "Paddle affiche le paiement et encaisse : le site ne voit jamais la carte.",
-      },
-      {
-        node: "api",
-        text: "Paddle prévient le site ; la signature HMAC de la notification est vérifiée.",
-      },
-      { node: "account", text: "L'abonnement est interprété : actif, résilié, fin de période." },
-      { node: "data", text: "L'utilisateur passe en Premium dans la base." },
-    ],
-  },
-];
+const AROUND = "Autour";
+const { journeys, services } = gufoPlan;
+const mainLayers = gufoPlan.layers.filter((layer) => layer.name !== AROUND);
+const aroundBlocks = gufoPlan.layers.find((layer) => layer.name === AROUND)?.blocks ?? [];
 
 const STEP_MS = 1800;
 
 export function GufoPlan() {
+  // La carte garantit au moins un parcours (le script de synchronisation le vérifie).
+  if (journeys.length === 0) return null;
+  return <GufoPlanView />;
+}
+
+function GufoPlanView() {
   const [journeyIndex, setJourneyIndex] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const journey = JOURNEYS[journeyIndex] ?? JOURNEYS[0];
+  const journey = journeys[journeyIndex] ?? journeys[0]!;
   const current = journey.steps[stepIndex] ?? journey.steps[0];
   const last = journey.steps.length - 1;
   const atEnd = stepIndex >= last;
@@ -233,21 +79,21 @@ export function GufoPlan() {
   };
 
   /** État d'un bloc : étape en cours, déjà parcouru, ou au repos. */
-  const stateOf = (id: NodeId): "current" | "visited" | "idle" => {
-    if (current.node === id) return "current";
+  const stateOf = (id: string): "current" | "visited" | "idle" => {
+    if (current?.node === id) return "current";
     if (journey.steps.slice(0, stepIndex).some((s) => s.node === id)) return "visited";
     return "idle";
   };
 
   /** Numéros des étapes qui passent par ce bloc, pour la pastille. */
-  const stepsOf = (id: NodeId) =>
+  const stepsOf = (id: string) =>
     journey.steps.flatMap((s, i) => (s.node === id && i <= stepIndex ? [i + 1] : []));
 
   return (
     <div ref={rootRef} className="glass rounded-[28px] p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div role="group" aria-label="Parcours" className="flex flex-wrap gap-2">
-          {JOURNEYS.map((j, i) => (
+          {journeys.map((j, i) => (
             <button
               key={j.id}
               type="button"
@@ -283,13 +129,13 @@ export function GufoPlan() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.45fr_1fr]">
         <div className="space-y-4">
-          {LAYERS.map((layer) => (
+          {mainLayers.map((layer) => (
             <section key={layer.name} aria-label={layer.name}>
               <p className="mb-2 font-mono text-[11px] tracking-[0.06em] text-(--u-dim) uppercase">
                 {layer.name}
               </p>
               <div
-                className={`grid gap-2.5 ${layer.blocks.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
+                className={`grid gap-2.5 ${layer.blocks.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
               >
                 {layer.blocks.map((block) => (
                   <PlanBlock
@@ -308,7 +154,7 @@ export function GufoPlan() {
               Services externes
             </p>
             <ul className="flex flex-wrap gap-2">
-              {SERVICES.map((service) => {
+              {services.map((service) => {
                 const state = stateOf(service.id);
                 return (
                   <li
@@ -323,16 +169,23 @@ export function GufoPlan() {
             </ul>
           </section>
 
-          <section aria-label="En dehors des requêtes des joueurs">
-            <p className="mb-2 font-mono text-[11px] tracking-[0.06em] text-(--u-dim) uppercase">
-              En dehors des requêtes
-            </p>
-            <div className="grid gap-2.5 sm:grid-cols-2">
-              {AROUND.map((block) => (
-                <PlanBlock key={block.id} block={block} state="idle" steps={[]} />
-              ))}
-            </div>
-          </section>
+          {aroundBlocks.length > 0 ? (
+            <section aria-label="En dehors des requêtes des joueurs">
+              <p className="mb-2 font-mono text-[11px] tracking-[0.06em] text-(--u-dim) uppercase">
+                En dehors des requêtes
+              </p>
+              <div className="grid gap-2.5 sm:grid-cols-2">
+                {aroundBlocks.map((block) => (
+                  <PlanBlock
+                    key={block.id}
+                    block={block}
+                    state={stateOf(block.id)}
+                    steps={stepsOf(block.id)}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
 
         <div>
@@ -369,10 +222,15 @@ export function GufoPlan() {
             ))}
           </ol>
           <p className="sr-only" aria-live="polite">
-            Étape {stepIndex + 1} : {current.text}
+            Étape {stepIndex + 1} : {current?.text}
           </p>
         </div>
       </div>
+
+      <p className="mt-5 font-mono text-[11px] text-(--u-dim)">
+        D&apos;après la carte du code ({gufoPlan.source}), générée le{" "}
+        {formatDay(gufoPlan.generatedAt)}.
+      </p>
     </div>
   );
 }
