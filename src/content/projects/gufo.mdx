@@ -1,0 +1,148 @@
+export const metadata = {
+  id: "PRJ-2026-05",
+  title: "Gufo",
+  kind: "projet personnel",
+  period: "2026",
+  tagline: "Le coach qui voit la partie",
+  taglineAccent: "avant les autres.",
+  summary:
+    "Un coach pour League of Legends : des conseils pendant la sélection des champions, puis le bilan de chaque partie classée, écrit à partir de faits vérifiés.",
+  status: "En cours",
+  stack: [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "PostgreSQL",
+    "Drizzle",
+    "Auth.js",
+    "API Riot",
+    "API Claude",
+    "Paddle",
+    "Resend",
+    "Vitest",
+    "Docker",
+  ],
+  repo: "https://github.com/pestouriealix-oss/ProjetLol",
+};
+
+<Pitch
+  items={[
+    {
+      label: "Le problème",
+      title: "Décider vite",
+      text: "Pendant la sélection des champions, on a quelques secondes pour décider. Après la partie, on ne sait pas vraiment ce qui a coûté la victoire.",
+    },
+    {
+      label: "La question",
+      title: "Un coach en direct ?",
+      text: "Peut-on conseiller un joueur pendant la draft, puis expliquer sa partie à partir de faits vérifiés plutôt que d'impressions ?",
+    },
+    {
+      label: "La réponse",
+      title: "Fiche + bilan",
+      text: "Gufo lit la draft tout seul et écrit une fiche en direct, puis fait le bilan de chaque partie classée avec un objectif chiffré.",
+    },
+  ]}
+/>
+
+## La draft, lue en direct
+
+Dès l'écran de chargement, Gufo lit la draft chez Riot, puis écrit la fiche en deux appels
+simultanés : les conditions de victoire de la partie, et le duel contre ton vis-à-vis.
+
+<DraftDemo />
+
+<Caption>
+  Aperçu illustratif recréé pour cette page : les phrases sont des exemples, pas une vraie fiche.
+</Caption>
+
+## En chiffres
+
+<Figures
+  items={[
+    { value: "24 455", label: "lignes de TypeScript, hors tests" },
+    { value: "220", label: "tests automatisés, dans 41 fichiers", accent: true },
+    { value: "21", label: "pages, dont l'esport, les actus et la progression" },
+    { value: "20", label: "tables PostgreSQL, créées par 14 migrations" },
+  ]}
+  source="Compté dans le dépôt le 7 novembre 2026."
+/>
+
+## Le plan du code
+
+Gufo tient en neuf blocs sur trois étages : les écrans, le métier, puis les comptes et la base.
+Choisis un parcours pour le suivre étape par étape.
+
+<GufoPlan />
+
+<Caption>D'après la carte du dépôt, générée le 5 novembre 2026.</Caption>
+
+## Des faits d'abord, le modèle ensuite
+
+Le modèle de langage ne reçoit que des chiffres déjà calculés et vérifiés : il rédige, il
+n'invente pas de statistiques. Ces faits sont affichés sous la fiche et le bilan, pour que le
+joueur puisse les vérifier.
+
+<Flow
+  label="Du jeu au conseil"
+  steps={[
+    { title: "API Riot", text: "draft en cours, parties, rangs" },
+    { title: "Synchronisation", text: "PostgreSQL, Drizzle" },
+    { title: "Faits calculés", text: "écarts d'or, morts, objectifs", highlight: true },
+    { title: "Claude", text: "rédige la fiche et le bilan" },
+    { title: "Le joueur", text: "conseils et objectif chiffré" },
+  ]}
+/>
+
+## Choix d'ingénieur
+
+<Choices
+  items={[
+    {
+      tag: "sécurité",
+      title: "Paiements vérifiés par signature",
+      text: "Chaque notification de Paddle est vérifiée par HMAC-SHA256, comparée en temps constant, et refusée au-delà de 5 minutes. Le site ne voit jamais de carte bancaire.",
+    },
+    {
+      tag: "sécurité",
+      title: "Une propriété de compte prouvée",
+      text: "Le coach ne travaille que pour un compte dont la propriété est vérifiée : Riot Sign On, ou une icône de profil à poser dans le jeu en moins de 15 minutes.",
+    },
+    {
+      tag: "sécurité",
+      title: "Des mots de passe hachés avec scrypt",
+      text: "Paramètres de l'OWASP, sel aléatoire par mot de passe, et des essais de connexion limités par e-mail et par adresse IP.",
+    },
+    {
+      tag: "fiabilité",
+      title: "Pas de chiffre sans source",
+      text: "En dessous de 40 parties pour un duel, la fiche le dit au lieu d'afficher un taux de victoire peu fiable.",
+    },
+    {
+      tag: "coût",
+      title: "Des duels mis en cache",
+      text: "Un duel déjà analysé sur le même patch est resservi aussitôt aux joueurs suivants, sans nouvel appel au modèle.",
+    },
+    {
+      tag: "coût",
+      title: "Un budget sous contrôle",
+      text: "Chaque appel au modèle est compté en jetons et en coût. Au-delà d'un budget mensuel, les fiches gratuites se mettent en pause.",
+    },
+  ]}
+/>
+
+## Ce qu'il reste à faire
+
+- **Une clé de production Riot** : la clé de développement expire toutes les 24 heures, et
+  Riot Sign On n'est accordé qu'aux produits approuvés. D'ici là, l'accès reste une petite
+  communauté sur invitation.
+- **Une source d'actualités sous licence** avant toute ouverture payante : les flux utilisés
+  aujourd'hui sont réservés à un usage personnel.
+- **Une politique de sécurité du contenu (CSP)** dans les en-têtes, et un workflow qui lance les
+  tests à chaque modification du dépôt.
+
+<Note>
+  Gufo n'est pas approuvé par Riot Games et ne reflète pas les opinions de Riot Games ni de
+  quiconque ayant participé à la production ou à la gestion de ses propriétés. League of Legends
+  est une marque de Riot Games, Inc.
+</Note>

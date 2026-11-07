@@ -1,6 +1,10 @@
 export const metadata = {
   id: "PRJ-2025-01",
   title: "Bataille navale en C",
+  kind: "projet d'école",
+  period: "2025-2026",
+  tagline: "Poser un navire",
+  taglineAccent: "sans jamais corrompre la grille.",
   summary:
     "Un jeu de bataille navale en console, écrit en C à trois : deux modes de jeu, un adversaire à trois niveaux et des sauvegardes binaires.",
   date: "2026-01-11",
@@ -9,6 +13,36 @@ export const metadata = {
   repo: "https://github.com/pestouriealix-oss/Bataille-navale",
   report: "/rapports/bataille-navale-rapport.pdf",
 };
+
+<Pitch
+  items={[
+    {
+      label: "Le problème",
+      title: "Un C sans filet",
+      text: "Allocation dynamique, structures, sauvegardes binaires et zéro avertissement à la compilation : en C, une seule case mal écrite corrompt tout le plateau.",
+    },
+    {
+      label: "La question",
+      title: "Comment poser un navire en sûreté ?",
+      text: "Comment placer une flotte sur la grille sans jamais écrire un navire à moitié, ni déborder du plateau ?",
+    },
+    {
+      label: "La réponse",
+      title: "Simuler avant d'écrire",
+      text: "Le placement vérifie la case de départ, le débordement et les collisions avant de toucher à la grille.",
+    },
+  ]}
+/>
+
+<Figures
+  items={[
+    { value: "2 500", label: "lignes de C, en modules" },
+    { value: "3", label: "développeurs sur le même code", accent: true },
+    { value: "14", label: "semaines, d'octobre 2025 à janvier 2026" },
+    { value: "3", label: "niveaux d'adversaire" },
+  ]}
+  source="D'après le dépôt et le rapport du projet."
+/>
 
 ## Contexte
 

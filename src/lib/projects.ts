@@ -21,6 +21,13 @@ const projectSchema = z.object({
   /** Identifiant au format des avis de sécurité : PRJ-AAAA-NN. */
   id: z.string().regex(/^PRJ-\d{4}-\d{2}$/, "Format attendu : PRJ-AAAA-NN"),
   title: z.string().min(1),
+  /** Cadre du projet, affiché en petit au-dessus du titre : « projet personnel », « projet d'école »… */
+  kind: z.string().min(1),
+  /** Période affichée à côté du cadre : « 2026 », « 2025-2026 ». */
+  period: z.string().min(1).optional(),
+  /** Accroche de la fiche ; `taglineAccent` en est la fin, mise en couleur. */
+  tagline: z.string().min(1).optional(),
+  taglineAccent: z.string().min(1).optional(),
   summary: z.string().min(1).max(200),
   /** Facultative tant que la date exacte n'est pas connue. */
   date: z.iso.date().optional(),
