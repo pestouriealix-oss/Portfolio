@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
+import { Container } from "@/components/container";
 import { PageHeader } from "@/components/page-header";
 import { siteConfig } from "@/config/site";
 
@@ -22,22 +23,24 @@ export default function ContactPage() {
   ].filter((channel) => channel !== null);
 
   return (
-    <>
+    <Container className="pt-36 pb-28 sm:pt-44">
       <PageHeader title="Contact" command="nc -lvnp 4444">
         Une question, une proposition ou un challenge à partager : écris-moi.
       </PageHeader>
 
-      <div className="grid gap-x-16 gap-y-14 lg:grid-cols-[2fr_3fr]">
-        <dl className="border-t border-line">
+      <div className="grid gap-5 lg:grid-cols-[2fr_3fr]">
+        <dl className="glass reveal self-start rounded-3xl px-6 py-2">
           {channels.map((channel) => (
-            <div key={channel.label} className="border-b border-line py-5">
-              <dt className="text-sm text-dim">{channel.label}</dt>
+            <div key={channel.label} className="border-b border-white/[0.08] py-4 last:border-b-0">
+              <dt className="font-mono text-[11px] tracking-[0.06em] text-dim uppercase">
+                {channel.label}
+              </dt>
               <dd className="mt-1 break-words">
                 {channel.href ? (
                   <a
                     href={channel.href}
                     rel="noopener noreferrer me"
-                    className="font-mono text-sm text-amber underline underline-offset-4"
+                    className="font-mono text-sm text-amber underline-offset-4 hover:underline"
                   >
                     {channel.value}
                   </a>
@@ -49,13 +52,13 @@ export default function ContactPage() {
           ))}
         </dl>
 
-        <section aria-labelledby="titre-formulaire">
-          <h2 id="titre-formulaire" className="mb-6 font-mono text-lg font-semibold">
+        <section aria-labelledby="titre-formulaire" className="glass reveal rounded-3xl p-6 sm:p-8">
+          <h2 id="titre-formulaire" className="mb-6 text-2xl font-semibold tracking-[-0.02em]">
             Écris-moi
           </h2>
           <ContactForm />
         </section>
       </div>
-    </>
+    </Container>
   );
 }
