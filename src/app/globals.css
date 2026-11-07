@@ -2,7 +2,8 @@
 
 /*
  * Design tokens. Référence visuelle : un terminal à phosphore ambre posé sur un
- * fond bleu nuit, plutôt que le vert "hacker" attendu.
+ * fond bleu nuit, plutôt que le vert "hacker" attendu. La v2 y ajoute une couche
+ * « verre » (panneaux translucides, flou d'arrière-plan) et des titres serrés.
  */
 @theme {
   --color-ink: #0f1424;
@@ -16,12 +17,15 @@
 
   --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Martian Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
   html {
     color-scheme: dark;
     background: var(--color-ink);
+    scroll-padding-top: 6rem;
   }
 
   body {
@@ -38,29 +42,138 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-amber);
+    outline: 2px solid var(--u-accent, var(--color-amber));
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 }
 
 /*
- * Seule animation non déclenchée par l'utilisateur : les lignes du scan
- * apparaissent l'une après l'autre au chargement. Le contenu est visible par
- * défaut ; l'animation n'est ajoutée que si l'utilisateur n'a pas demandé à
- * réduire les mouvements.
+ * Univers : chaque fiche projet redéfinit ces variables (src/content/project-themes.ts).
+ * Hors d'une fiche, elles retombent sur les couleurs du site.
+ */
+:root {
+  --u-bg: var(--color-ink);
+  --u-surface: var(--color-panel);
+  --u-line: var(--color-line);
+  --u-text: var(--color-text);
+  --u-dim: var(--color-dim);
+  --u-accent: var(--color-amber);
+  --u-on-accent: var(--color-ink);
+}
+
+@layer components {
+  /* Verre dépoli : panneau translucide, flou de ce qui passe dessous. */
+  .glass {
+    background: color-mix(in srgb, var(--u-surface) 58%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid color-mix(in srgb, var(--u-text) 9%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.05),
+      0 24px 60px -28px rgb(0 0 0 / 0.7);
+  }
+
+  /* Le mot clé du titre d'accueil : ambre vers le vert des ports ouverts. */
+  .text-gradient {
+    background: linear-gradient(92deg, var(--color-amber) 0%, #ff8a6b 48%, var(--color-open) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Trame de points en fond de page, fondue vers les bords. */
+  .dot-grid {
+    background-image: radial-gradient(rgb(147 155 184 / 0.2) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 18%, #000 25%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 18%, #000 25%, transparent 75%);
+  }
+
+  .lift {
+    transition:
+      transform 0.6s var(--ease-out-expo),
+      border-color 0.3s ease;
+  }
+  .lift:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--u-accent) 40%, transparent);
+  }
+
+  /* Barre de défilement masquée pour la navigation horizontale sur téléphone. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Animations. Le contenu est visible par défaut : chaque animation n'est ajoutée
+ * que si l'utilisateur n'a pas demandé à réduire les mouvements.
  */
 @media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 0.9s var(--ease-out-expo) both;
+    animation-delay: calc(var(--d, 0) * 80ms);
+  }
+
+  /* Apparition au défilement, là où le navigateur sait lier une animation à la vue. */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+
   .scan-line {
     animation: scan-reveal 60ms linear both;
     animation-delay: calc(var(--i, 0) * 130ms + 200ms);
   }
-
-  .scan-cursor {
-    animation: scan-blink 1.1s steps(1) infinite;
+  .scan-cursor,
+  .blink {
+    animation: blink 1.1s steps(1) infinite;
+  }
+  .ping {
+    animation: ping 1.8s ease-out infinite;
+  }
+  .sweep {
+    animation: spin 3.4s linear infinite;
+  }
+  .pupil {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: look 5s ease-in-out infinite;
+  }
+  .iris {
+    animation: iris 1.4s var(--ease-out-expo) both;
+  }
+  .wipe {
+    animation: wipe 4.2s ease-in-out infinite alternate;
+  }
+  .flip-a {
+    animation: flip-a 4s steps(1) infinite;
+  }
+  .flip-b {
+    animation: flip-b 4s steps(1) infinite;
+  }
+  .pulse-soft {
+    animation: pulse-soft 1.2s ease-in-out infinite;
   }
 }
 
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 /* `both` applique l'état initial pendant le délai : sans animation, la ligne reste visible. */
 @keyframes scan-reveal {
   from {
@@ -70,79 +183,219 @@
     opacity: 1;
   }
 }
-
-@keyframes scan-blink {
+@keyframes blink {
   50% {
     opacity: 0;
   }
 }
+@keyframes ping {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes look {
+  0%,
+  35% {
+    transform: translate(0, 0);
+  }
+  45%,
+  65% {
+    transform: translate(0.9px, -0.3px);
+  }
+  75%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes iris {
+  from {
+    transform: scale(0.18);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes wipe {
+  from {
+    width: 18%;
+  }
+  to {
+    width: 82%;
+  }
+}
+@keyframes flip-a {
+  0% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes flip-b {
+  0% {
+    opacity: 0;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pulse-soft {
+  50% {
+    opacity: 0.35;
+  }
+}
 
-/* Corps des études de cas (MDX). */
-.prose {
+/*
+ * Corps des études de cas (MDX). Les règles ne visent que les enfants directs
+ * du corps (le texte écrit en Markdown) : les composants des fiches (cartes,
+ * schémas, démo) gardent leur propre mise en forme. Le texte courant reste à
+ * 68 caractères par ligne ; les composants prennent toute la largeur.
+ */
+.prose > :where(p, ul, ol, pre, table, blockquote) {
   max-width: 68ch;
 }
 .prose > * + * {
   margin-top: 1.1rem;
 }
-.prose h2 {
-  margin-top: 2.75rem;
+.prose > h2 {
+  margin-top: 6rem;
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  line-height: 1.05;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+  color: var(--u-text);
+}
+.prose > h2::before {
+  content: "// ";
+  display: block;
+  margin-bottom: 0.9rem;
   font-family: var(--font-mono);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--color-amber);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--u-accent);
 }
-.prose h2::before {
-  content: "## ";
-  color: var(--color-dim);
+.prose > h2 + * {
+  margin-top: 1.5rem;
 }
-.prose ul,
-.prose ol {
+.prose > h3 {
+  margin-top: 2.25rem;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+.prose > :where(p, ul, ol) {
+  color: color-mix(in srgb, var(--u-text) 82%, var(--u-dim));
+}
+.prose > :where(p, ul, ol, table) strong {
+  color: var(--u-text);
+  font-weight: 650;
+}
+.prose > :where(ul, ol) {
   padding-left: 1.25rem;
 }
-.prose ul {
+.prose > ul {
   list-style: square;
 }
-.prose ol {
+.prose > ol {
   list-style: decimal;
 }
-.prose li + li {
-  margin-top: 0.35rem;
+.prose > :where(ul, ol) li + li {
+  margin-top: 0.4rem;
 }
-.prose li::marker {
-  color: var(--color-dim);
+.prose > :where(ul, ol) li::marker {
+  color: var(--u-accent);
 }
-.prose a {
-  color: var(--color-amber);
+.prose > :where(p, ul, ol, table) a {
+  color: var(--u-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.prose code {
+.prose > :where(p, ul, ol, table, h2, h3) code {
   font-family: var(--font-mono);
   font-size: 0.85em;
 }
-.prose pre {
+.prose > pre {
   overflow-x: auto;
-  border: 1px solid var(--color-line);
-  background: var(--color-panel);
+  border: 1px solid var(--u-line);
+  border-radius: 1rem;
+  background: var(--u-surface);
   padding: 1rem 1.25rem;
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   line-height: 1.7;
 }
-.prose table {
+.prose > table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
 }
-.prose th,
-.prose td {
-  border-bottom: 1px solid var(--color-line);
+.prose > table :where(th, td) {
+  border-bottom: 1px solid var(--u-line);
   padding: 0.75rem 1rem 0.75rem 0;
   text-align: left;
   vertical-align: top;
 }
-.prose th {
-  color: var(--color-dim);
+.prose > table th {
+  color: var(--u-dim);
   font-weight: 500;
+}
+
+/*
+ * Univers Gufo : titres dans la police condensée du projet, en capitales.
+ * Les variables `--font-gufo-*-face` sont posées par next/font sur ce même
+ * élément (src/app/fonts) : on les résout ici, pas dans :root où elles n'existent pas.
+ */
+.univers-gufo {
+  --gufo-display: var(--font-gufo-display-face), "Arial Narrow", ui-sans-serif, sans-serif;
+  --gufo-text: var(--font-gufo-text-face), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--gufo-text);
+}
+.univers-gufo .prose > h2 {
+  font-family: var(--gufo-display);
+  font-size: clamp(3rem, 6vw, 5.25rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.univers-gufo .prose > h2::before {
+  font-size: 0.8rem;
+  text-transform: none;
+}
+.font-gufo-display,
+.univers-gufo :is(.case-title, .figure-value) {
+  font-family: var(--gufo-display);
+}
+.univers-gufo .case-title {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.univers-gufo .figure-value {
+  font-size: 4.5rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.9;
 }
 
 /* Pac-Man du formulaire de contact : la bouche reste entrouverte, et mâche pendant la frappe. */

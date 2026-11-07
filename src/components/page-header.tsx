@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { delay } from "@/lib/style";
 
 type PageHeaderProps = {
   title: string;
@@ -9,15 +10,28 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, command, children }: PageHeaderProps) {
   return (
-    <header className="mb-12 max-w-2xl">
+    <header className="mb-14 max-w-3xl">
       {command ? (
         // Décoratif : masqué aux lecteurs d'écran, le titre porte l'information.
-        <p aria-hidden="true" className="mb-4 font-mono text-xs text-dim sm:text-sm">
-          <span className="text-amber">$</span> {command}
+        <p
+          aria-hidden="true"
+          className="glass rise inline-flex max-w-full items-center gap-2 overflow-hidden rounded-full px-4 py-1.5 font-mono text-xs text-dim"
+        >
+          <span className="text-amber">$</span>
+          <span className="truncate">{command}</span>
         </p>
       ) : null}
-      <h1 className="font-mono text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-      {children ? <p className="mt-4 text-lg text-dim">{children}</p> : null}
+      <h1
+        className="rise mt-7 text-5xl leading-[0.95] font-semibold tracking-[-0.045em] sm:text-7xl"
+        style={delay(1)}
+      >
+        {title}
+      </h1>
+      {children ? (
+        <p className="rise mt-6 text-lg text-dim sm:text-xl" style={delay(2)}>
+          {children}
+        </p>
+      ) : null}
     </header>
   );
 }
