@@ -7,6 +7,8 @@
  * --plan  La carte du code (floorplan) : le fichier HTML obtenu avec « Export »
  *         dans la carte, ou le JSON du graphe (schéma floorplan/graph@1).
  *         Écrit src/content/gufo/plan.json : blocs, services, parcours.
+ *         Avec le fichier HTML, copie aussi la carte elle-même, nettoyée, dans
+ *         public/cartes/gufo.html : c'est elle que la fiche affiche.
  * --repo  Le dossier du dépôt Gufo (ProjetLol). Compte les lignes, les tests,
  *         les pages, les tables et les migrations à partir des fichiers suivis
  *         par Git. Écrit src/content/gufo/stats.json.
@@ -15,12 +17,14 @@
  * relance ce script quand Gufo évolue, on relit le diff, puis on commite.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-const OUT_DIR = path.join(import.meta.dirname, "..", "src", "content", "gufo");
+const ROOT = path.join(import.meta.dirname, "..");
+const OUT_DIR = path.join(ROOT, "src", "content", "gufo");
+const MAP_FILE = path.join(ROOT, "public", "cartes", "gufo.html");
 
 const { values } = parseArgs({
   options: { plan: { type: "string" }, repo: { type: "string" } },
@@ -49,13 +53,11 @@ function fail(message) {
 
 // ---------------------------------------------------------------- Le plan
 
-/** Lit le graphe dans un JSON, ou dans la page HTML exportée (`window.FLOORPLAN = {…};`). */
-function readGraph(file) {
-  const text = readFileSync(file, "utf8");
-  if (file.endsWith(".json")) return JSON.parse(text);
+/** Position du littéral `window.FLOORPLAN = {…}` dans la page exportée. */
+function findGraph(text, file) {
   const start = text.indexOf("window.FLOORPLAN = ");
   if (start === -1) fail(`aucun graphe trouvé dans ${file}`);
-  // Le graphe est un littéral JSON sur une ligne : on le lit jusqu'à la fin de l'objet.
+  // Le graphe est un littéral JSON : on le lit jusqu'à l'accolade qui le ferme.
   const from = text.indexOf("{", start);
   let depth = 0;
   let inString = false;
@@ -66,9 +68,47 @@ function readGraph(file) {
       else if (c === '"') inString = false;
     } else if (c === '"') inString = true;
     else if (c === "{") depth++;
-    else if (c === "}" && --depth === 0) return JSON.parse(text.slice(from, i + 1));
+    else if (c === "}" && --depth === 0) return { from, to: i + 1 };
   }
   fail(`graphe illisible dans ${file}`);
+}
+
+/** Lit le graphe dans un JSON, ou dans la page HTML exportée. */
+function readGraph(file) {
+  const text = readFileSync(file, "utf8");
+  if (file.endsWith(".json")) return JSON.parse(text);
+  const { from, to } = findGraph(text, file);
+  return JSON.parse(text.slice(from, to));
+}
+
+/**
+ * Copie la carte exportée dans public/, sans ce qui ne doit pas être publié :
+ * - le chemin du dossier sur l'ordinateur (il contient le nom d'utilisateur) ;
+ * - le journal « Recent work », qui reprend des demandes faites à l'assistant de code ;
+ * - la configuration du serveur local de la carte, s'il y en a une (jeton compris).
+ */
+function publishMap(file) {
+  let text = readFileSync(file, "utf8");
+  const { from, to } = findGraph(text, file);
+  const graph = JSON.parse(text.slice(from, to));
+
+  const root = graph.meta?.root;
+  graph.recent = { items: [], tasks: [] };
+  if (graph.meta) graph.meta.root = graph.meta.rootName ?? "";
+
+  // Échappe `<` : le JSON est réinjecté dans une balise <script>.
+  const json = JSON.stringify(graph).replace(/</g, "\\u003c");
+  text = text.slice(0, from) + json + text.slice(to);
+  text = text.replace(/window\.FLOORPLAN_SERVER\s*=\s*\{[^;]*\};?/g, "");
+
+  // Dernier filet : plus aucune trace du chemin local, nulle part dans la page.
+  if (root) text = text.split(root).join(graph.meta.root);
+  const home = root?.match(/^\/Users\/[^/]+|^\/home\/[^/]+|^[A-Z]:\\Users\\[^\\]+/)?.[0];
+  if (home && text.includes(home)) text = text.split(home).join("~");
+
+  mkdirSync(path.dirname(MAP_FILE), { recursive: true });
+  writeFileSync(MAP_FILE, text);
+  console.log(`✓ ${path.relative(process.cwd(), MAP_FILE)} (${Math.round(text.length / 1024)} Ko)`);
 }
 
 /**
@@ -187,5 +227,8 @@ function syncStats(repo) {
   });
 }
 
-if (values.plan) syncPlan(path.resolve(values.plan));
+if (values.plan) {
+  syncPlan(path.resolve(values.plan));
+  if (values.plan.endsWith(".html")) publishMap(path.resolve(values.plan));
+}
 if (values.repo) syncStats(path.resolve(values.repo));

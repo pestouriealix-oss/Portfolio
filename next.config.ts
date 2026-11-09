@@ -12,19 +12,28 @@ const isDev = process.env.NODE_ENV !== "production";
  * verrouille tout le reste. Aucune ressource tierce n'est chargée : les polices
  * sont auto-hébergées, d'où le 'self' partout.
  */
-const csp = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self'",
-  `connect-src 'self'${isDev ? " ws:" : ""}`,
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
-].join("; ");
+const cspDirectives = (frameAncestors: string) =>
+  [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self'",
+    `connect-src 'self'${isDev ? " ws:" : ""}`,
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    `frame-ancestors ${frameAncestors}`,
+    ...(isDev ? [] : ["upgrade-insecure-requests"]),
+  ].join("; ");
+
+const csp = cspDirectives("'none'");
+/**
+ * Les cartes de code exportées (public/cartes) sont affichées dans un cadre sur
+ * les fiches projet : elles seules acceptent d'être encadrées, et seulement par
+ * ce site. Partout ailleurs, aucun site ne peut encadrer le portfolio.
+ */
+const mapCsp = cspDirectives("'self'");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
@@ -46,7 +55,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // Déclarée après : pour une même clé, la dernière règle qui correspond l'emporte.
+      { source: "/cartes/:path*", headers: [{ key: "Content-Security-Policy", value: mapCsp }] },
+    ];
   },
 };
 
