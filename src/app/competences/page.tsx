@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Container } from "@/components/container";
 import { PageHeader } from "@/components/page-header";
 import { siteConfig } from "@/config/site";
 import { skillDomains, type SkillLevel } from "@/content/skills";
@@ -18,7 +19,7 @@ const levelMarker: Record<SkillLevel, { glyph: string; className: string }> = {
 
 export default function SkillsPage() {
   return (
-    <>
+    <Container className="pt-36 pb-28 sm:pt-44">
       <PageHeader
         title="Compétences"
         command={`openssl s_client -connect ${siteConfig.handle}:443`}
@@ -28,7 +29,7 @@ export default function SkillsPage() {
         année.
       </PageHeader>
 
-      <ul className="mb-6 flex flex-wrap gap-x-8 gap-y-1 text-sm text-dim">
+      <ul className="mb-6 flex flex-wrap gap-x-8 gap-y-1 font-mono text-xs text-dim">
         {(Object.keys(levelMarker) as SkillLevel[]).map((level) => (
           <li key={level}>
             <span aria-hidden="true" className={`mr-2 ${levelMarker[level].className}`}>
@@ -39,17 +40,18 @@ export default function SkillsPage() {
         ))}
       </ul>
 
-      <div className="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {skillDomains.map((domain) => (
-          <section key={domain.name} className="bg-ink">
-            <h2 className="border-b border-line bg-panel px-4 py-3 font-mono text-sm font-semibold">
+          <section key={domain.name} className="glass lift reveal overflow-hidden rounded-3xl">
+            <h2 className="flex items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4 font-mono text-sm font-semibold">
               {domain.name}
+              <span className="font-normal text-dim">{domain.skills.length}</span>
             </h2>
-            <ul>
+            <ul className="px-2 py-2">
               {domain.skills.map((skill) => (
                 <li
                   key={skill.name}
-                  className="flex gap-3 border-b border-line/60 px-4 py-3 last:border-b-0"
+                  className="flex gap-3 rounded-xl px-3 py-2.5 hover:bg-white/[0.04]"
                 >
                   <span aria-hidden="true" className={levelMarker[skill.level].className}>
                     {levelMarker[skill.level].glyph}
@@ -64,6 +66,6 @@ export default function SkillsPage() {
           </section>
         ))}
       </div>
-    </>
+    </Container>
   );
 }

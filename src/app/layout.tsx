@@ -5,7 +5,7 @@ import "@fontsource-variable/instrument-sans";
 import "@fontsource-variable/martian-mono";
 import "./globals.css";
 import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import { SiteHeader } from "@/components/site-header";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -47,12 +47,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="flex min-h-dvh flex-col">
         <a
           href="#contenu"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:bg-amber focus:px-3 focus:py-2 focus:text-ink"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-20 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-amber focus:px-4 focus:py-2 focus:text-ink"
         >
           Aller au contenu
         </a>
-        <Header />
-        <main id="contenu" className="mx-auto w-full max-w-5xl flex-1 px-5 py-14 sm:px-8 sm:py-20">
+        <SiteHeader />
+        {/* Pleine largeur : chaque page centre son contenu, et une fiche projet peint son fond. */}
+        <main id="contenu" className="flex-1">
           {children}
         </main>
         <Footer />

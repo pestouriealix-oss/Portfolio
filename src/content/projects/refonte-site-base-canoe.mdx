@@ -1,6 +1,10 @@
 export const metadata = {
   id: "PRJ-2026-02",
   title: "Refonte du site d'une base de canoë",
+  kind: "pour un ami",
+  period: "2026",
+  tagline: "Vitrine, réservation, administration :",
+  taglineAccent: "au même endroit.",
   summary:
     "Nouvelle version du site d'une base de canoë, pour un ami : site vitrine bilingue, réservation en ligne et espace d'administration.",
   date: "2026-06-01",
@@ -8,6 +12,36 @@ export const metadata = {
   stack: ["TypeScript", "React", "TanStack Start", "Supabase", "Stripe"],
   repo: "https://github.com/pestouriealix-oss/Refonte_Canoe",
 };
+
+<Pitch
+  items={[
+    {
+      label: "Le problème",
+      title: "Un site éclaté",
+      text: "Un site qui vieillissait, un menu sur trois lignes, et des réservations envoyées vers un service externe.",
+    },
+    {
+      label: "La question",
+      title: "Tout au même endroit ?",
+      text: "Peut-on réunir la vitrine, la réservation et le suivi des réservations dans un seul site, en deux langues ?",
+    },
+    {
+      label: "La réponse",
+      title: "Un site, trois usages",
+      text: "Une vitrine bilingue, un calendrier de réservation avec paiement en ligne, et un espace d'administration.",
+    },
+  ]}
+/>
+
+<Figures
+  items={[
+    { value: "9 → 7", label: "entrées de menu, sur une seule ligne" },
+    { value: "2", label: "langues, français et anglais", accent: true },
+    { value: "3", label: "teintes : bleu rivière, pierre claire, ocre" },
+    { value: "4", label: "points à durcir notés avant la mise en ligne" },
+  ]}
+  source="D'après le dépôt et la relecture du code."
+/>
 
 ## Contexte
 

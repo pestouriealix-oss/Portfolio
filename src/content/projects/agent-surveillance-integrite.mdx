@@ -1,12 +1,35 @@
 export const metadata = {
   id: "PRJ-2026-04",
   title: "Agent de surveillance d'intégrité de fichiers",
+  kind: "projet personnel",
+  tagline: "Le moindre octet modifié",
+  taglineAccent: "doit se voir.",
   summary:
     "Un agent FIM (File Integrity Monitor) qui détecte toute modification de fichiers sensibles sur une machine.",
   status: "Planifié",
   stack: [],
   draft: true,
 };
+
+<Pitch
+  items={[
+    {
+      label: "Le problème",
+      title: "Des traces dans les fichiers",
+      text: "Un attaquant qui compromet une machine modifie presque toujours des fichiers : configuration, binaires, tâches planifiées.",
+    },
+    {
+      label: "La question",
+      title: "Comment le voir à coup sûr ?",
+      text: "Comment repérer toute modification, création ou suppression, même si l'attaquant tente d'effacer ses traces ?",
+    },
+    {
+      label: "La réponse visée",
+      title: "Une empreinte de référence",
+      text: "Enregistrer l'empreinte des fichiers surveillés, puis signaler tout écart par rapport à cet état.",
+    },
+  ]}
+/>
 
 ## Objectif
 

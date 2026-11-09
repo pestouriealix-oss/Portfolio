@@ -16,8 +16,6 @@ export const siteConfig = {
   description:
     "Alix-Pierre Pestourie, élève ingénieur en informatique à l'EILCO (Calais), en deuxième année du cycle ingénieur.",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
-  /** Exemple : "Stage de 3 mois à partir de juin 2027". */
-  availability: null as string | null,
   links: {
     email: "pestouriealix@gmail.com" as string | null,
     github: "https://github.com/pestouriealix-oss" as string | null,

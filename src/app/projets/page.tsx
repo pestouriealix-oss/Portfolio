@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Container } from "@/components/container";
 import { PageHeader } from "@/components/page-header";
+import { ProjectCard } from "@/components/project-card";
 import { siteConfig } from "@/config/site";
 import { getProjects } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "Projets",
-  description: "Études de cas : le problème, l'architecture, les compromis et les résultats.",
+  description:
+    "Études de cas : le problème, ce que j'ai construit, les choix techniques et ce que ça mesure.",
   alternates: { canonical: "/projets" },
 };
 
@@ -14,65 +16,19 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <>
+    <Container className="pt-36 pb-28 sm:pt-44">
       <PageHeader title="Projets" command={`curl -s ${siteConfig.handle}:80/projets`}>
-        Chaque projet est rédigé comme une étude de cas : le problème, l&apos;architecture, les
-        compromis et les résultats.
+        Chaque projet est une étude de cas, dans son propre univers : le problème, ce que j&apos;ai
+        construit, les choix techniques et ce que ça mesure.
       </PageHeader>
 
-      <ul className="border-t border-line">
-        {projects.map(({ slug, meta }) => (
-          <li
-            key={slug}
-            className="grid gap-x-8 gap-y-2 border-b border-line py-7 sm:grid-cols-[8.5rem_1fr_auto]"
-          >
-            <span className="font-mono text-sm text-dim">{meta.id}</span>
-            <div>
-              <h2 className="text-lg font-semibold">
-                <Link
-                  href={`/projets/${slug}`}
-                  className="underline-offset-4 hover:text-amber hover:underline"
-                >
-                  {meta.title}
-                </Link>
-              </h2>
-              <p className="mt-1 text-dim">{meta.summary}</p>
-
-              {meta.stack.length > 0 ? (
-                <ul aria-label="Technologies" className="mt-4 flex flex-wrap gap-2">
-                  {meta.stack.map((tech) => (
-                    <li
-                      key={tech}
-                      className="border border-line px-2 py-0.5 font-mono text-xs text-dim"
-                    >
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-
-              <p className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-                {meta.repo ? (
-                  <a
-                    href={meta.repo}
-                    rel="noopener noreferrer"
-                    className="border border-amber px-3 py-1.5 font-semibold text-amber transition-colors hover:bg-amber hover:text-ink"
-                  >
-                    Voir sur GitHub
-                  </a>
-                ) : null}
-                <Link
-                  href={`/projets/${slug}`}
-                  className="text-text underline underline-offset-4 hover:text-amber"
-                >
-                  Lire l&apos;étude de cas
-                </Link>
-              </p>
-            </div>
-            <span className="text-sm text-dim">{meta.status}</span>
-          </li>
+      <div className="grid gap-5 md:grid-cols-2">
+        {projects.map((project) => (
+          <div key={project.slug} className="reveal">
+            <ProjectCard project={project} />
+          </div>
         ))}
-      </ul>
-    </>
+      </div>
+    </Container>
   );
 }

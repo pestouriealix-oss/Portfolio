@@ -19,13 +19,15 @@ npm run dev        # http://localhost:3000
 
 ## Où modifier quoi
 
-| Je veux…                           | Fichier                               |
-| ---------------------------------- | ------------------------------------- |
-| Changer mon identité, mes liens    | `src/config/site.ts`                  |
-| Ajouter un projet                  | `src/content/projects/<slug>.mdx`     |
-| Modifier la matrice de compétences | `src/content/skills.ts`               |
-| Modifier expérience et formation   | `src/content/timeline.ts`             |
-| Changer couleurs et polices        | `src/app/globals.css` (bloc `@theme`) |
+| Je veux…                           | Fichier                                           |
+| ---------------------------------- | ------------------------------------------------- |
+| Changer mon identité, mes liens    | `src/config/site.ts`                              |
+| Ajouter un projet                  | `src/content/projects/<slug>.mdx`                 |
+| Modifier la matrice de compétences | `src/content/skills.ts`                           |
+| Modifier expérience et formation   | `src/content/timeline.ts`                         |
+| Changer couleurs et polices        | `src/app/globals.css` (bloc `@theme`)             |
+| Donner un univers à un projet      | `src/content/project-themes.ts`                   |
+| Ajouter une brique d'étude de cas  | `src/components/case/`, puis `mdx-components.tsx` |
 
 ### Ajouter un projet
 
@@ -33,8 +35,11 @@ Crée `src/content/projects/mon-projet.mdx`. Le nom du fichier devient l'URL (`/
 
 ```mdx
 export const metadata = {
-  id: "PRJ-2026-03",
+  id: "PRJ-2026-06",
   title: "Titre",
+  kind: "projet personnel", // cadre affiché au-dessus du titre
+  period: "2026", // facultatif
+  tagline: "Une accroche", // facultatif ; taglineAccent en est la fin, mise en couleur
   summary: "Une phrase, 200 caractères maximum.",
   date: "2026-10-01",
   status: "En cours", // "En production" | "En cours" | "Terminé" | "Planifié" | "Archivé"
@@ -42,7 +47,15 @@ export const metadata = {
   repo: "https://github.com/…", // facultatif
 };
 
-## Problème
+<Pitch
+  items={[
+    { label: "Le problème", title: "…", text: "…" },
+    { label: "La question", title: "…", text: "…" },
+    { label: "La réponse", title: "…", text: "…" },
+  ]}
+/>
+
+## Contexte
 
 …
 ```
@@ -50,11 +63,32 @@ export const metadata = {
 Le schéma est dans `src/lib/projects.ts`. Un champ invalide fait échouer `npm run build`, donc la CI.
 Ajoute `draft: true` tant qu'une fiche est incomplète : un bandeau l'indique et la page n'est pas indexée. `date` est facultative.
 
+Les briques disponibles dans un fichier MDX, sans import : `Pitch` (problème, question, réponse), `Figures` (chiffres mesurés, avec leur source), `Flow` (chaîne d'étapes), `Choices` (choix d'ingénieur), `Caption`, `Note`, et pour Gufo `DraftDemo` et `GufoPlan`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
+
+### Mettre à jour la fiche Gufo
+
+Le plan du code et les chiffres de Gufo ne sont pas écrits à la main : ils viennent de `src/content/gufo/plan.json` et `stats.json`. Quand Gufo évolue :
+
+1. Régénère la carte du code de Gufo, puis exporte-la avec le bouton « Export » (un fichier HTML).
+2. Lance, depuis ce dépôt :
+
+   ```bash
+   npm run gufo:sync -- --plan ~/Downloads/gufo-map.html --repo ~/ProjetLol
+   ```
+
+   `--plan` relit les blocs, les services et les parcours de la carte ; `--repo` compte les lignes, les tests (avec Vitest), les pages, les tables et les migrations. Les deux options sont indépendantes.
+
+3. Relis le diff des deux fichiers JSON, commite et pousse : Vercel redéploie la fiche.
+
+Rien n'est lu au moment du build : le site ne dépend ni de la carte ni du dépôt de Gufo.
+
 ## Choix d'architecture
 
-- **Presque tout est statique.** Chaque page est pré-rendue au build ; les seuls composants client sont la navigation (page active) et le formulaire de contact.
+- **Presque tout est statique.** Chaque page est pré-rendue au build. Les composants client se limitent à ce qui réagit : la barre de navigation (page active, progression du défilement), le formulaire de contact, la relance du scan et les deux démos de la fiche Gufo.
+- **Un univers par projet.** Chaque fiche redéfinit des variables CSS (`--u-accent`, `--u-bg`…) : les composants des études de cas s'y adaptent sans réglage. Les images animées sont en CSS et SVG, sans ressource externe.
+- **Animations sobres.** Toutes s'arrêtent si l'utilisateur a demandé à réduire les mouvements, et le contenu reste visible sans elles.
 - **Contenu dans Git.** Pas de base de données ni de CMS : les projets sont des fichiers MDX typés.
-- **Aucune ressource tierce.** Les polices sont auto-hébergées (`@fontsource`), ce qui permet une CSP en `'self'`.
+- **Aucune ressource tierce.** Les polices sont auto-hébergées (`@fontsource`, et les polices de Gufo sous licence OFL dans `src/app/fonts`), ce qui permet une CSP en `'self'`.
 - **En-têtes de sécurité** définis dans `next.config.ts` : CSP, HSTS, `nosniff`, `frame-ancestors 'none'`, Permissions-Policy.
   `script-src` garde `'unsafe-inline'` : une CSP à nonce imposerait un rendu dynamique. C'est le compromis à lever en priorité si le site devient dynamique.
 - **Formulaire de contact** : Server Action validée par Zod, champ piège anti-robots, limite de débit par IP, envoi par l'API HTTP de Resend. La clé `RESEND_API_KEY` ne quitte jamais le serveur.

@@ -50,7 +50,7 @@ function PacmanTrack({ length }: { length: number }) {
 }
 
 const fieldClass =
-  "mt-2 w-full border border-line bg-panel px-3 py-2.5 text-text placeholder:text-dim focus-visible:border-amber";
+  "mt-2 w-full rounded-xl border border-line bg-ink/60 px-3.5 py-3 text-text placeholder:text-dim focus-visible:border-amber";
 
 export function ContactForm() {
   const [state, formAction, pending] = useActionState(sendMessage, initialState);
@@ -114,7 +114,7 @@ export function ContactForm() {
 
       <label className="block text-sm text-dim">
         Message
-        <span className="mt-2 block border border-line bg-panel focus-within:border-amber">
+        <span className="mt-2 block overflow-hidden rounded-xl border border-line bg-ink/60 focus-within:border-amber">
           <textarea
             name="message"
             required
@@ -147,7 +147,7 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={pending}
-          className="bg-amber px-5 py-2.5 font-semibold text-ink transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="min-h-12 rounded-full bg-amber px-6 font-semibold text-ink transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {pending ? "Envoi en cours…" : "Envoyer le message"}
         </button>

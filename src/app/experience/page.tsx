@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Container } from "@/components/container";
 import { PageHeader } from "@/components/page-header";
 import { Timeline } from "@/components/timeline";
 import { experience } from "@/content/timeline";
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
 
 export default function ExperiencePage() {
   return (
-    <>
+    <Container className="pt-36 pb-28 sm:pt-44">
       <PageHeader title="Expérience" command="journalctl --since 2021 --reverse">
         Une société cofondée, un emploi saisonnier et un engagement associatif.
       </PageHeader>
       <Timeline entries={experience} />
-    </>
+    </Container>
   );
 }

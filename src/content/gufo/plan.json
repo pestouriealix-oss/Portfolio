@@ -1,0 +1,205 @@
+{
+  "source": "Gufo map",
+  "generatedAt": "2026-11-05",
+  "layers": [
+    {
+      "name": "Écrans",
+      "blocks": [
+        {
+          "id": "web",
+          "name": "Le site (écrans)",
+          "text": "Tout ce que le joueur voit : pages, morceaux d'écran et textes affichés."
+        },
+        {
+          "id": "api",
+          "name": "Adresses du serveur",
+          "text": "Les quelques adresses que le navigateur ou des services extérieurs appellent directement : connexion, paiement, fiche de draft, bilan de partie, Riot Sign On."
+        }
+      ]
+    },
+    {
+      "name": "Métier",
+      "blocks": [
+        {
+          "id": "coach",
+          "name": "Coach IA",
+          "text": "Ce qui fait parler le coach : lecture de la draft, fiche de conseils, bilan de partie, et la façon de demander à Claude."
+        },
+        {
+          "id": "game",
+          "name": "Données du jeu",
+          "text": "Tout ce qui vient de League of Legends : appels à Riot, images et fiches des champions, synchronisation des parties et calculs de statistiques."
+        },
+        {
+          "id": "content",
+          "name": "Esport et actus",
+          "text": "Lit les compétitions sur PandaScore et les articles dans des flux RSS publics."
+        }
+      ]
+    },
+    {
+      "name": "Socle",
+      "blocks": [
+        {
+          "id": "account",
+          "name": "Comptes, accès et paiement",
+          "text": "Connexion, droits selon l'offre, abonnement Paddle, e-mails et vérification des saisies."
+        },
+        {
+          "id": "data",
+          "name": "Base de données",
+          "text": "Toutes les lectures et écritures en base, une porte par sujet, plus les migrations qui créent les tables."
+        }
+      ]
+    },
+    {
+      "name": "Autour",
+      "blocks": [
+        {
+          "id": "jobs",
+          "name": "Tâches et scripts",
+          "text": "Scripts lancés à la main ou chaque nuit : collecte des matchups, coût du modèle, test des flux RSS."
+        },
+        {
+          "id": "tests",
+          "name": "Tests",
+          "text": "Tests automatiques, rangés à côté du code qu'ils vérifient."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "postgres",
+      "name": "PostgreSQL"
+    },
+    {
+      "id": "riot",
+      "name": "API Riot"
+    },
+    {
+      "id": "ddragon",
+      "name": "Data Dragon"
+    },
+    {
+      "id": "anthropic",
+      "name": "Claude (Anthropic)"
+    },
+    {
+      "id": "pandascore",
+      "name": "PandaScore"
+    },
+    {
+      "id": "paddle",
+      "name": "Paddle"
+    },
+    {
+      "id": "rss",
+      "name": "Sites d'actualités"
+    },
+    {
+      "id": "resend",
+      "name": "Resend"
+    },
+    {
+      "id": "github",
+      "name": "GitHub Actions"
+    }
+  ],
+  "journeys": [
+    {
+      "id": "draft-sheet",
+      "name": "Le coach de draft écrit sa fiche",
+      "steps": [
+        {
+          "node": "web",
+          "text": "Le joueur remplit la draft (ou elle se remplit seule depuis la partie en cours) et demande la fiche."
+        },
+        {
+          "node": "api",
+          "text": "Le navigateur appelle le serveur, qui vérifie la connexion et le quota du jour."
+        },
+        {
+          "node": "coach",
+          "text": "Le coach rassemble les faits : sorts des champions, taux de victoire du duel, duel déjà écrit pour d'autres joueurs."
+        },
+        {
+          "node": "game",
+          "text": "Les statistiques de matchups, comptées à partir de vraies parties classées, sont jointes."
+        },
+        {
+          "node": "coach",
+          "text": "Deux demandes partent en même temps à Claude : conditions de victoire et duel."
+        },
+        {
+          "node": "anthropic",
+          "text": "Claude écrit la fiche, renvoyée morceau par morceau à l'écran."
+        },
+        {
+          "node": "data",
+          "text": "La fiche, le duel et le coût de l'appel sont enregistrés."
+        }
+      ]
+    },
+    {
+      "id": "sync-review",
+      "name": "Synchroniser puis analyser une partie",
+      "steps": [
+        {
+          "node": "web",
+          "text": "Sur le tableau de bord, le joueur clique « Mettre à jour »."
+        },
+        {
+          "node": "game",
+          "text": "Le site va chercher les nouvelles parties du compte."
+        },
+        {
+          "node": "riot",
+          "text": "Riot renvoie l'historique, le détail et la chronologie de chaque partie."
+        },
+        {
+          "node": "data",
+          "text": "Les parties sont enregistrées en base."
+        },
+        {
+          "node": "api",
+          "text": "Sur la page d'une partie, « Écrire mon bilan » demande l'analyse."
+        },
+        {
+          "node": "coach",
+          "text": "Seuls des faits calculés (écarts à 10 et 15 min, morts, objectifs) sont donnés au modèle."
+        },
+        {
+          "node": "anthropic",
+          "text": "Claude écrit ce qui a marché, ce qui a coûté et comment progresser."
+        }
+      ]
+    },
+    {
+      "id": "premium",
+      "name": "Passer en Premium",
+      "steps": [
+        {
+          "node": "web",
+          "text": "Le joueur clique sur le bouton de paiement de la page Premium."
+        },
+        {
+          "node": "paddle",
+          "text": "Paddle affiche le paiement et encaisse ; le site ne voit jamais la carte."
+        },
+        {
+          "node": "api",
+          "text": "Paddle prévient le site ; la signature de la notification est vérifiée."
+        },
+        {
+          "node": "account",
+          "text": "L'abonnement est interprété : actif, résilié, fin de période."
+        },
+        {
+          "node": "data",
+          "text": "L'utilisateur passe en Premium dans la base."
+        }
+      ]
+    }
+  ]
+}
