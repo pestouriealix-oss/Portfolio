@@ -12,13 +12,13 @@ const isDev = process.env.NODE_ENV !== "production";
  * verrouille tout le reste. Aucune ressource tierce n'est chargée : les polices
  * sont auto-hébergées, d'où le 'self' partout.
  */
-const cspDirectives = (frameAncestors: string) =>
+const cspDirectives = ({ frameAncestors, fontSrc }: { frameAncestors: string; fontSrc: string }) =>
   [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
-    "font-src 'self'",
+    `font-src ${fontSrc}`,
     `connect-src 'self'${isDev ? " ws:" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
@@ -27,13 +27,15 @@ const cspDirectives = (frameAncestors: string) =>
     ...(isDev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 
-const csp = cspDirectives("'none'");
+const csp = cspDirectives({ frameAncestors: "'none'", fontSrc: "'self'" });
 /**
  * Les cartes de code exportées (public/cartes) sont affichées dans un cadre sur
  * les fiches projet : elles seules acceptent d'être encadrées, et seulement par
- * ce site. Partout ailleurs, aucun site ne peut encadrer le portfolio.
+ * ce site. Partout ailleurs, aucun site ne peut encadrer le portfolio. Une carte
+ * est un fichier autonome qui embarque ses polices en `data:` : on les autorise
+ * pour ces pages seulement.
  */
-const mapCsp = cspDirectives("'self'");
+const mapCsp = cspDirectives({ frameAncestors: "'self'", fontSrc: "'self' data:" });
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },

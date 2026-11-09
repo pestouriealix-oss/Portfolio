@@ -94,7 +94,7 @@ function publishMap(file) {
 
   const root = graph.meta?.root;
   graph.recent = { items: [], tasks: [] };
-  if (graph.meta) graph.meta.root = graph.meta.rootName ?? "";
+  if (root) graph.meta.root = graph.meta.rootName ?? "";
 
   // Échappe `<` : le JSON est réinjecté dans une balise <script>.
   const json = JSON.stringify(graph).replace(/</g, "\\u003c");
@@ -105,6 +105,11 @@ function publishMap(file) {
   if (root) text = text.split(root).join(graph.meta.root);
   const home = root?.match(/^\/Users\/[^/]+|^\/home\/[^/]+|^[A-Z]:\\Users\\[^\\]+/)?.[0];
   if (home && text.includes(home)) text = text.split(home).join("~");
+
+  // Thème sombre par défaut, comme le site ; le bouton de thème de la carte reste actif.
+  const autoTheme = "let mem = 'auto';";
+  if (text.includes(autoTheme)) text = text.replace(autoTheme, "let mem = 'dark';");
+  else console.warn("! Thème de la carte non trouvé : elle suivra le thème de l'appareil.");
 
   mkdirSync(path.dirname(MAP_FILE), { recursive: true });
   writeFileSync(MAP_FILE, text);

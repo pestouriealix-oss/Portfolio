@@ -67,7 +67,7 @@ Les briques disponibles dans un fichier MDX, sans import : `Pitch` (problème, q
 
 ### Mettre à jour la fiche Gufo
 
-Le plan du code et les chiffres de Gufo ne sont pas écrits à la main : ils viennent de `src/content/gufo/plan.json` et `stats.json`. Quand Gufo évolue :
+La carte du code, le plan des parcours et les chiffres de Gufo ne sont pas écrits à la main : ils viennent de `public/cartes/gufo.html`, `src/content/gufo/plan.json` et `stats.json`. Quand Gufo évolue :
 
 1. Régénère la carte du code de Gufo, puis exporte-la avec le bouton « Export » (un fichier HTML).
 2. Lance, depuis ce dépôt :
@@ -76,9 +76,9 @@ Le plan du code et les chiffres de Gufo ne sont pas écrits à la main : ils vie
    npm run gufo:sync -- --plan ~/Downloads/gufo-map.html --repo ~/ProjetLol
    ```
 
-   `--plan` relit les blocs, les services et les parcours de la carte ; `--repo` compte les lignes, les tests (avec Vitest), les pages, les tables et les migrations. Les deux options sont indépendantes.
+   `--plan` relit les blocs, les services et les parcours de la carte, et copie la carte elle-même dans `public/cartes/gufo.html`, sans chemin local ni journal de travail, en thème sombre par défaut. `--repo` compte les lignes, les tests (avec Vitest), les pages, les tables et les migrations. Les deux options sont indépendantes.
 
-3. Relis le diff des deux fichiers JSON, commite et pousse : Vercel redéploie la fiche.
+3. Relis le diff, commite et pousse : Vercel redéploie la fiche.
 
 Rien n'est lu au moment du build : le site ne dépend ni de la carte ni du dépôt de Gufo.
 
