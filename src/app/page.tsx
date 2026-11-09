@@ -78,17 +78,14 @@ export default async function HomePage() {
           className="rise mt-7 max-w-[980px] text-[clamp(3rem,7.6vw,6.75rem)] leading-[0.96] font-[650] tracking-[-0.048em]"
           style={delay(1)}
         >
-          Comprendre les systèmes,
-          <br />
-          <span className="text-gradient">jusqu&apos;au dernier octet.</span>
+          {siteConfig.name}
         </h1>
 
         <p
           className="rise mt-8 max-w-[720px] text-lg text-dim sm:text-[21px] sm:leading-relaxed"
           style={delay(2)}
         >
-          Je suis <strong className="font-semibold text-text">{siteConfig.name}</strong>, élève
-          ingénieur en informatique à l&apos;
+          Élève ingénieur en informatique à l&apos;
           <strong className="font-semibold text-text">{siteConfig.school}</strong>. Mon terrain :{" "}
           <strong className="font-semibold text-text">
             le développement full-stack, Linux et les réseaux

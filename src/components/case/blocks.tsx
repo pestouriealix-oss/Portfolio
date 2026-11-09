@@ -27,20 +27,35 @@ export function Pitch({ items }: { items: PitchItem[] }) {
 
 type Figure = { value: string; label: string; accent?: boolean };
 
+/** Colonnes selon le nombre de chiffres, pour ne jamais laisser une case vide. */
+const figureColumns: Record<number, string> = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
+
 /** Les chiffres mesurés du projet, avec leur source. Jamais d'estimation ici. */
 export function Figures({ items, source }: { items: Figure[]; source: string }) {
   return (
     <figure>
-      <dl className="grid gap-px overflow-hidden rounded-3xl border border-(--u-line) bg-(--u-line) sm:grid-cols-2 lg:grid-cols-4">
+      <dl
+        className={`grid gap-px overflow-hidden rounded-3xl border border-(--u-line) bg-(--u-line) ${
+          figureColumns[items.length] ?? "sm:grid-cols-2 lg:grid-cols-4"
+        }`}
+      >
         {items.map((item) => (
-          <div key={item.label} className="bg-(--u-bg) p-6 sm:p-7">
+          // Le libellé (dt) précède la valeur dans le HTML ; l'ordre visuel est inversé.
+          <div
+            key={item.label}
+            className="flex flex-col-reverse justify-end bg-(--u-bg) p-6 sm:p-7"
+          >
+            <dt className="mt-3 text-(--u-dim)">{item.label}</dt>
             <dd
               className="figure-value text-5xl leading-none font-[650] tracking-[-0.04em]"
               style={item.accent ? { color: "var(--u-accent)" } : undefined}
             >
               {item.value}
             </dd>
-            <dt className="mt-3 text-(--u-dim)">{item.label}</dt>
           </div>
         ))}
       </dl>

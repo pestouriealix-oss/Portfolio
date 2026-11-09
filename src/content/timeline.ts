@@ -14,7 +14,7 @@ export const experience: TimelineEntry[] = [
   {
     period: "Depuis 2021",
     title: "Cofondateur d'ULTRA.Digital",
-    place: "Bordeaux",
+    place: "Bordeaux / Lisbonne",
     description:
       "Société de création de sites web : sites vitrines et boutiques en ligne pour des entreprises et des indépendants. J'y ai accompagné les clients de la définition de leur besoin à la mise en ligne, en suivant les développements et en validant les livrables.",
   },

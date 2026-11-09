@@ -3,7 +3,7 @@ export const metadata = {
   title: "Refonte du site d'une base de canoë",
   kind: "pour un ami",
   period: "2026",
-  tagline: "Vitrine, réservation, administration :",
+  tagline: "Vitrine, réservation, administration :",
   taglineAccent: "au même endroit.",
   summary:
     "Nouvelle version du site d'une base de canoë, pour un ami : site vitrine bilingue, réservation en ligne et espace d'administration.",
@@ -38,9 +38,8 @@ export const metadata = {
     { value: "9 → 7", label: "entrées de menu, sur une seule ligne" },
     { value: "2", label: "langues, français et anglais", accent: true },
     { value: "3", label: "teintes : bleu rivière, pierre claire, ocre" },
-    { value: "4", label: "points à durcir notés avant la mise en ligne" },
   ]}
-  source="D'après le dépôt et la relecture du code."
+  source="D'après le dépôt du projet."
 />
 
 ## Contexte
@@ -76,12 +75,6 @@ comptent pour un client : appeler et réserver.
   base elle-même : un visiteur peut créer une réservation, seul un administrateur peut les
   lire.
 - Stripe Checkout pour le paiement.
-
-## Ce qu'il reste à durcir
-
-En relisant le code avant de le publier, j'ai noté quatre points à corriger avant une mise en
-production. Les deux principaux : le webhook de paiement ne vérifie pas la signature des
-événements qu'il reçoit, et le premier compte créé devient administrateur.
 
 ## État d'avancement
 
