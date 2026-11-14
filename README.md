@@ -63,28 +63,28 @@ export const metadata = {
 Le schéma est dans `src/lib/projects.ts`. Un champ invalide fait échouer `npm run build`, donc la CI.
 Ajoute `draft: true` tant qu'une fiche est incomplète : un bandeau l'indique et la page n'est pas indexée. `date` est facultative.
 
-Les briques disponibles dans un fichier MDX, sans import : `Pitch` (problème, question, réponse), `Figures` (chiffres mesurés, avec leur source), `Flow` (chaîne d'étapes), `Choices` (choix d'ingénieur), `Caption`, `Note`, et pour Gufo `DraftDemo` et `GufoPlan`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
+Les briques disponibles dans un fichier MDX, sans import : `Specs` (fiche technique : un mécanisme par ligne et le fichier qui le met en œuvre), `Flow` (chaîne d'étapes), `Caption`, `Note`, et pour Gufo `GufoArchitecture` et `DraftDemo`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
 
 ### Mettre à jour la fiche Gufo
 
-La carte du code, le plan des parcours et les chiffres de Gufo ne sont pas écrits à la main : ils viennent de `public/cartes/gufo.html`, `src/content/gufo/plan.json` et `stats.json`. Quand Gufo évolue :
+Le schéma d'architecture de Gufo n'est pas dessiné à la main : il vient de la carte du code de Gufo, via `src/content/gufo/plan.json`. Quand Gufo évolue :
 
 1. Régénère la carte du code de Gufo, puis exporte-la avec le bouton « Export » (un fichier HTML).
 2. Lance, depuis ce dépôt :
 
    ```bash
-   npm run gufo:sync -- --plan ~/Downloads/gufo-map.html --repo ~/ProjetLol
+   npm run gufo:sync -- --plan ~/Downloads/gufo-map.html
    ```
 
-   `--plan` relit les blocs, les services et les parcours de la carte, et copie la carte elle-même dans `public/cartes/gufo.html`, sans chemin local ni journal de travail, en thème sombre par défaut. `--repo` compte les lignes, les tests (avec Vitest), les pages, les tables et les migrations. Les deux options sont indépendantes.
+   Le script relit les blocs, les services, les liaisons entre fichiers (ramenées aux blocs) et les parcours, et écrit `plan.json`. Il copie aussi la carte elle-même dans `public/cartes/gufo.html`, sans chemin local ni journal de travail, pour le lien « Carte complète ».
 
 3. Relis le diff, commite et pousse : Vercel redéploie la fiche.
 
-Rien n'est lu au moment du build : le site ne dépend ni de la carte ni du dépôt de Gufo.
+Rien n'est lu au moment du build : le site ne dépend ni de la carte ni du dépôt de Gufo. La mise en page du schéma (`src/lib/circuit.ts`) est calculée au build : étages de puces, connecteurs en bordure, pistes à angles droits routées dans les couloirs entre étages.
 
 ## Choix d'architecture
 
-- **Presque tout est statique.** Chaque page est pré-rendue au build. Les composants client se limitent à ce qui réagit : la barre de navigation (page active, progression du défilement), le formulaire de contact, la relance du scan et les deux démos de la fiche Gufo.
+- **Presque tout est statique.** Chaque page est pré-rendue au build. Les composants client se limitent à ce qui réagit : la barre de navigation (page active, progression du défilement), le formulaire de contact, la relance du scan, et sur la fiche Gufo le schéma de circuit et la démo de draft.
 - **Un univers par projet.** Chaque fiche redéfinit des variables CSS (`--u-accent`, `--u-bg`…) : les composants des études de cas s'y adaptent sans réglage. Les images animées sont en CSS et SVG, sans ressource externe.
 - **Animations sobres.** Toutes s'arrêtent si l'utilisateur a demandé à réduire les mouvements, et le contenu reste visible sans elles.
 - **Contenu dans Git.** Pas de base de données ni de CMS : les projets sont des fichiers MDX typés.

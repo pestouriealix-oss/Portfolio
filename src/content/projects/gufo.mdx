@@ -1,5 +1,3 @@
-import { gufoFigures } from "@/content/gufo";
-
 export const metadata = {
   id: "PRJ-2026-05",
   title: "Gufo",
@@ -27,107 +25,96 @@ export const metadata = {
   repo: "https://github.com/pestouriealix-oss/ProjetLol",
 };
 
-<Pitch
-  items={[
-    {
-      label: "Le problème",
-      title: "Décider vite",
-      text: "Pendant la sélection des champions, on a quelques secondes pour décider. Après la partie, on ne sait pas vraiment ce qui a coûté la victoire.",
-    },
-    {
-      label: "La question",
-      title: "Un coach en direct ?",
-      text: "Peut-on conseiller un joueur pendant la draft, puis expliquer sa partie à partir de faits vérifiés plutôt que d'impressions ?",
-    },
-    {
-      label: "La réponse",
-      title: "Fiche + bilan",
-      text: "Gufo lit la draft tout seul et écrit une fiche en direct, puis fait le bilan de chaque partie classée avec un objectif chiffré.",
-    },
-  ]}
-/>
+## Architecture
 
-## La draft, lue en direct
+Une application Next.js (App Router) déployée d'un seul bloc : les pages et les routes d'API en
+haut, les modules métier sous `src/lib` au milieu, l'accès aux données (Drizzle, PostgreSQL) en
+dessous. Chaque piste du schéma résume les imports et les appels réseau entre deux dossiers.
 
-Dès l'écran de chargement, Gufo lit la draft chez Riot, puis écrit la fiche en deux appels
-simultanés : les conditions de victoire de la partie, et le duel contre ton vis-à-vis.
+<GufoArchitecture />
+
+## Fiche de draft
+
+`POST /api/draft/sheet` exige une session, puis renvoie la fiche au navigateur en flux
+(`ReadableStream`) pendant qu'elle s'écrit. Côté serveur, deux appels au modèle partent en
+parallèle, chacun en _tool use_ diffusé : les conditions de victoire, et le duel contre le
+vis-à-vis. Chaque moitié est envoyée dès qu'elle avance ; un `AbortController` commun coupe les
+deux appels si la requête est annulée. Si le modèle prévu pour le duel ne répond pas, la fiche
+se replie sur l'autre.
 
 <DraftDemo />
 
 <Caption>
-  Aperçu illustratif recréé pour cette page : les phrases sont des exemples, pas une vraie fiche.
+  Reconstitution de l'interface : les phrases sont des exemples, pas une vraie fiche.
 </Caption>
 
-## En chiffres
+## Pipeline d'analyse
 
-{/* Chiffres et plan régénérés par `npm run gufo:sync` : voir src/content/gufo. */}
-
-<Figures items={gufoFigures.items} source={gufoFigures.source} />
-
-## La carte du code
-
-La carte complète du projet, générée à partir de son code : chaque bloc, ses liens avec les
-autres et avec les services extérieurs. Elle est mise à jour au fil du projet.
-
-<CodeMap />
-
-## Trois parcours, pas à pas
-
-Le code se range en étages : les écrans, le métier, puis les comptes et la base. Choisis un
-parcours pour le suivre étape par étape.
-
-<GufoPlan />
-
-## Des faits d'abord, le modèle ensuite
-
-Le modèle de langage ne reçoit que des chiffres déjà calculés et vérifiés : il rédige, il
-n'invente pas de statistiques. Ces faits sont affichés sous la fiche et le bilan, pour que le
-joueur puisse les vérifier.
+Le prompt ne contient que des valeurs calculées côté serveur à partir des parties synchronisées :
+le modèle rédige à partir de ces valeurs et n'en calcule aucune. Les faits transmis sont affichés
+sous la fiche et sous le bilan.
 
 <Flow
-  label="Du jeu au conseil"
+  label="De l'API Riot au bilan"
   steps={[
     { title: "API Riot", text: "draft en cours, parties, rangs" },
     { title: "Synchronisation", text: "PostgreSQL, Drizzle" },
     { title: "Faits calculés", text: "écarts d'or, morts, objectifs", highlight: true },
-    { title: "Claude", text: "rédige la fiche et le bilan" },
-    { title: "Le joueur", text: "conseils et objectif chiffré" },
+    { title: "Claude", text: "rédaction de la fiche et du bilan" },
+    { title: "Interface", text: "texte et faits sources" },
   ]}
 />
 
-## Choix d'ingénieur
+## Sécurité
 
-<Choices
+<Specs
   items={[
     {
-      tag: "sécurité",
-      title: "Paiements vérifiés par signature",
-      text: "Chaque notification de Paddle est vérifiée par HMAC-SHA256, comparée en temps constant, et refusée au-delà de 5 minutes. Le site ne voit jamais de carte bancaire.",
+      term: "Webhooks Paddle",
+      text: "Signature HMAC-SHA256 recalculée et comparée en temps constant (timingSafeEqual). Une notification dont l'horodatage s'écarte de plus de 5 minutes est rejetée. Aucune donnée de carte ne transite par le site.",
+      source: "src/lib/billing/webhook.ts",
     },
     {
-      tag: "sécurité",
-      title: "Une propriété de compte prouvée",
-      text: "Le coach ne travaille que pour un compte dont la propriété est vérifiée : Riot Sign On, ou une icône de profil à poser dans le jeu en moins de 15 minutes.",
+      term: "Mots de passe",
+      text: "scrypt avec les paramètres de l'OWASP (N = 2¹⁷, r = 8, p = 1) et un sel aléatoire par mot de passe.",
+      source: "src/lib/auth/password.ts",
     },
     {
-      tag: "sécurité",
-      title: "Des mots de passe hachés avec scrypt",
-      text: "Paramètres de l'OWASP, sel aléatoire par mot de passe, et des essais de connexion limités par e-mail et par adresse IP.",
+      term: "Connexion",
+      text: "Essais limités à 5 par adresse e-mail et à 30 par adresse IP, sur une fenêtre de 15 minutes.",
+      source: "src/app/(auth)/actions.ts",
     },
     {
-      tag: "fiabilité",
-      title: "Pas de chiffre sans source",
-      text: "En dessous de 40 parties pour un duel, la fiche le dit au lieu d'afficher un taux de victoire peu fiable.",
+      term: "Propriété du compte",
+      text: "Le coach ne travaille que pour un compte Riot prouvé : par Riot Sign On (OAuth), ou par un défi qui demande de poser dans le jeu une icône de profil tirée au hasard, dans les 30 minutes.",
+      source: "src/lib/sync/ownership.ts",
+    },
+  ]}
+/>
+
+## Coût et fiabilité du modèle
+
+<Specs
+  items={[
+    {
+      term: "Cache des duels",
+      text: "Un duel déjà écrit est resservi sans appel au modèle. Clé : version du prompt, modèle, saison, empreinte Data Dragon des deux champions, poste, partenaires de voie et verdict statistique. Le patch n'en fait pas partie : un duel reste valable tant que ses deux champions ne sont pas modifiés.",
+      source: "src/lib/coach/matchup-key.ts",
     },
     {
-      tag: "coût",
-      title: "Des duels mis en cache",
-      text: "Un duel déjà analysé sur le même patch est resservi aussitôt aux joueurs suivants, sans nouvel appel au modèle.",
+      term: "Budget",
+      text: "Chaque appel enregistre ses tokens (entrée, sortie, cache) et son coût. Au-delà du plafond mensuel LLM_MONTHLY_BUDGET_USD, les fiches des comptes gratuits sont suspendues ; les offres payantes continuent.",
+      source: "src/lib/coach/usage.ts",
     },
     {
-      tag: "coût",
-      title: "Un budget sous contrôle",
-      text: "Chaque appel au modèle est compté en jetons et en coût. Au-delà d'un budget mensuel, les fiches gratuites se mettent en pause.",
+      term: "Seuil statistique",
+      text: "Sous 40 parties, le taux de victoire d'un duel n'est pas affiché : la fiche signale que l'échantillon est trop faible.",
+      source: "src/lib/stats/matchups.ts",
+    },
+    {
+      term: "Patch de référence",
+      text: "Les statistiques viennent du patch en cours s'il compte assez de parties, sinon du plus récent qui en a, en début de patch.",
+      source: "src/lib/coach/facts.ts",
     },
   ]}
 />
@@ -144,6 +131,6 @@ joueur puisse les vérifier.
 
 <Note>
   Gufo n'est pas approuvé par Riot Games et ne reflète pas les opinions de Riot Games ni de
-  quiconque ayant participé à la production ou à la gestion de ses propriétés. League of Legends
-  est une marque de Riot Games, Inc.
+  quiconque ayant participé à la production ou à la gestion de ses propriétés. League of Legends est
+  une marque de Riot Games, Inc.
 </Note>

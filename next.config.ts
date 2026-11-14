@@ -29,13 +29,10 @@ const cspDirectives = ({ frameAncestors, fontSrc }: { frameAncestors: string; fo
 
 const csp = cspDirectives({ frameAncestors: "'none'", fontSrc: "'self'" });
 /**
- * Les cartes de code exportées (public/cartes) sont affichées dans un cadre sur
- * les fiches projet : elles seules acceptent d'être encadrées, et seulement par
- * ce site. Partout ailleurs, aucun site ne peut encadrer le portfolio. Une carte
- * est un fichier autonome qui embarque ses polices en `data:` : on les autorise
- * pour ces pages seulement.
+ * Les cartes de code exportées (public/cartes) sont des fichiers autonomes qui
+ * embarquent leurs polices en `data:` : on les autorise pour ces pages seulement.
  */
-const mapCsp = cspDirectives({ frameAncestors: "'self'", fontSrc: "'self' data:" });
+const mapCsp = cspDirectives({ frameAncestors: "'none'", fontSrc: "'self' data:" });
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },

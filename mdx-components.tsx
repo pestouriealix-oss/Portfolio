@@ -1,8 +1,7 @@
 import type { MDXComponents } from "mdx/types";
-import { Caption, Choices, Figures, Flow, Note, Pitch } from "@/components/case/blocks";
-import { CodeMap } from "@/components/case/code-map";
+import { Caption, Flow, Note, Specs } from "@/components/case/blocks";
 import { DraftDemo } from "@/components/case/draft-demo";
-import { GufoPlan } from "@/components/case/gufo-plan";
+import { GufoArchitecture } from "@/components/case/gufo-architecture";
 
 /**
  * Point d'extension requis par @next/mdx. Les briques des études de cas sont
@@ -10,14 +9,11 @@ import { GufoPlan } from "@/components/case/gufo-plan";
  */
 const caseComponents = {
   Caption,
-  Choices,
-  CodeMap,
   DraftDemo,
-  Figures,
   Flow,
-  GufoPlan,
+  GufoArchitecture,
   Note,
-  Pitch,
+  Specs,
 };
 
 export function useMDXComponents(components: MDXComponents = {}): MDXComponents {
