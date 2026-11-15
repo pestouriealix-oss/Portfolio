@@ -14,23 +14,23 @@ export const experience: TimelineEntry[] = [
   {
     period: "Depuis 2021",
     title: "Cofondateur d'ULTRA.Digital",
-    place: "Bordeaux",
+    place: "Bordeaux / Lisbonne",
     description:
-      "Société de création de sites web : sites vitrines et boutiques en ligne pour des entreprises et des indépendants. J'y ai accompagné les clients de la définition de leur besoin à la mise en ligne, en suivant les développements et en validant les livrables.",
+      "Société de création de sites web et de solutions digitales sur mesure : sites vitrines et boutiques en ligne pour des entreprises et des indépendants. J'y ai accompagné les clients de la définition de leur besoin à la mise en ligne, en suivant les développements et en validant les livrables.",
   },
   {
     period: "Été 2026",
     title: "Emploi saisonnier dans une base de canoë",
     place: "Saint-Julien-de-Lampon, Dordogne",
     description:
-      "Un mois et demi en poste polyvalent : accueil des clients, gestion de l'affluence sur la base, conduite des navettes.",
+      "Un mois et demi en poste polyvalent : refonte du site web de la base, accueil des clients, gestion de l'affluence sur la base, conduite des navettes.",
   },
   {
     period: "Janvier – mai 2026",
     title: "Projet solidaire à l'Association d'Entraide du Calaisis",
     place: "Calais",
     description:
-      "Bénévolat en équipe de quatre dans une association d'aide alimentaire : dix samedis matin, environ trente heures chacun, à décharger les camions, trier les denrées et préparer la distribution réservée aux étudiants.",
+      "Bénévolat en équipe de quatre dans une association d'aide alimentaire : dix samedis matin, environ trente heures chacun, à décharger les camions, trier les denrées et préparer la distribution réservée aux étudiants. Nous avons aussi proposé à l'association des solutions pour mieux suivre et gérer son stock de denrées.",
   },
 ];
 
@@ -51,10 +51,10 @@ export const formation: TimelineEntry[] = [
   },
   {
     period: "2022 – 2025",
-    title: "Classe préparatoire TSI",
+    title: "Classe préparatoire aux grandes écoles (CPGE)",
     place: "Lycée Léonce Vieljeux, La Rochelle",
     description:
-      "Mathématiques, physique et sciences de l'ingénieur. TIPE sur l'atténuation de la fibre optique et les phénomènes de diffusion.",
+      "Filière TSI (technologie et sciences industrielles) : mathématiques, physique et sciences de l'ingénieur. TIPE sur l'atténuation de la fibre optique et les phénomènes de diffusion.",
   },
   {
     period: "2019 – 2022",

@@ -2,7 +2,6 @@ import { Container } from "@/components/container";
 import { ProjectCard } from "@/components/project-card";
 import { ScanOutput, type ScanRow } from "@/components/scan-output";
 import { siteConfig } from "@/config/site";
-import { formatNumber, gufoLinesRounded, gufoStats } from "@/content/gufo";
 import { skillDomains } from "@/content/skills";
 import { getProjects } from "@/lib/projects";
 import { delay } from "@/lib/style";
@@ -78,23 +77,20 @@ export default async function HomePage() {
           className="rise mt-7 max-w-[980px] text-[clamp(3rem,7.6vw,6.75rem)] leading-[0.96] font-[650] tracking-[-0.048em]"
           style={delay(1)}
         >
-          Comprendre les systèmes,
-          <br />
-          <span className="text-gradient">jusqu&apos;au dernier octet.</span>
+          {siteConfig.name}
         </h1>
 
         <p
           className="rise mt-8 max-w-[720px] text-lg text-dim sm:text-[21px] sm:leading-relaxed"
           style={delay(2)}
         >
-          Je suis <strong className="font-semibold text-text">{siteConfig.name}</strong>, élève
-          ingénieur en informatique à l&apos;
+          Élève ingénieur en informatique à l&apos;
           <strong className="font-semibold text-text">{siteConfig.school}</strong>. Mon terrain :{" "}
           <strong className="font-semibold text-text">
             le développement full-stack, Linux et les réseaux
           </strong>
-          . Mon plus gros projet, Gufo, est un coach League of Legends : {gufoLinesRounded} lignes
-          de TypeScript et {formatNumber(gufoStats.tests)} tests automatisés.
+          . Mon plus gros projet, Gufo, est un coach League of Legends écrit en TypeScript :
+          Next.js, PostgreSQL et l&apos;API Claude.
         </p>
 
         <dl className="rise mt-11 grid gap-3 sm:grid-cols-3" style={delay(3)}>

@@ -63,23 +63,23 @@
 }
 
 @layer components {
-  /* Verre dépoli : panneau translucide, flou de ce qui passe dessous. */
+  /*
+   * Panneau « verre » : translucide, avec un liseré clair. Le flou d'arrière-plan
+   * (backdrop-filter) coûte cher au défilement, car le navigateur doit recalculer
+   * le flou à chaque image : il est réservé à `.glass-blur`, la barre de navigation,
+   * seul élément sous lequel le contenu défile vraiment.
+   */
   .glass {
-    background: color-mix(in srgb, var(--u-surface) 58%, transparent);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    backdrop-filter: blur(18px) saturate(150%);
+    background: color-mix(in srgb, var(--u-surface) 72%, transparent);
     border: 1px solid color-mix(in srgb, var(--u-text) 9%, transparent);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.05),
       0 24px 60px -28px rgb(0 0 0 / 0.7);
   }
-
-  /* Le mot clé du titre d'accueil : ambre vers le vert des ports ouverts. */
-  .text-gradient {
-    background: linear-gradient(92deg, var(--color-amber) 0%, #ff8a6b 48%, var(--color-open) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .glass-blur {
+    background: color-mix(in srgb, var(--u-surface) 58%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
   }
 
   /* Trame de points en fond de page, fondue vers les bords. */
@@ -150,8 +150,12 @@
   .iris {
     animation: iris 1.4s var(--ease-out-expo) both;
   }
-  .wipe {
-    animation: wipe 4.2s ease-in-out infinite alternate;
+  /* Volet avant/après : deux translations opposées, sans recalcul de mise en page. */
+  .wipe-frame {
+    animation: wipe-frame 4.2s ease-in-out infinite alternate;
+  }
+  .wipe-content {
+    animation: wipe-content 4.2s ease-in-out infinite alternate;
   }
   .flip-a {
     animation: flip-a 4s steps(1) infinite;
@@ -227,12 +231,20 @@
     opacity: 1;
   }
 }
-@keyframes wipe {
+@keyframes wipe-frame {
   from {
-    width: 18%;
+    transform: translateX(-82%);
   }
   to {
-    width: 82%;
+    transform: translateX(-18%);
+  }
+}
+@keyframes wipe-content {
+  from {
+    transform: translateX(82%);
+  }
+  to {
+    transform: translateX(18%);
   }
 }
 @keyframes flip-a {
@@ -381,7 +393,7 @@
   text-transform: none;
 }
 .font-gufo-display,
-.univers-gufo :is(.case-title, .figure-value) {
+.univers-gufo .case-title {
   font-family: var(--gufo-display);
 }
 .univers-gufo .case-title {
@@ -391,11 +403,147 @@
   letter-spacing: 0;
   text-transform: uppercase;
 }
-.univers-gufo .figure-value {
-  font-size: 4.5rem;
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.9;
+
+/*
+ * Pleine largeur dans le corps d'une fiche : un schéma déborde de la colonne de
+ * texte, jusqu'à 1180 px, sans jamais dépasser de l'écran.
+ */
+.bleed {
+  --bleed: max(100%, min(1180px, 100vw - 4rem));
+  width: var(--bleed);
+  margin-left: calc((100% - var(--bleed)) / 2);
+}
+
+/*
+ * Schéma de circuit (src/components/case/circuit-board.tsx). Les états viennent
+ * d'attributs `data-state` ; les couleurs, de l'univers du projet.
+ */
+.circuit-svg {
+  /* Calque à part : les impulsions ne repeignent que le schéma, pas la page. */
+  will-change: transform;
+  contain: paint;
+}
+.circuit-grid {
+  fill: color-mix(in srgb, var(--u-text) 9%, transparent);
+}
+.circuit-row {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--u-dim);
+}
+.circuit-trace {
+  fill: none;
+  stroke: color-mix(in srgb, var(--u-text) 24%, transparent);
+  stroke-width: 1.6;
+  transition:
+    stroke 0.3s,
+    opacity 0.3s;
+}
+.circuit-trace[data-state="lit"] {
+  stroke: var(--u-accent);
+  stroke-width: 2;
+}
+.circuit-trace[data-state="trail"] {
+  stroke: color-mix(in srgb, var(--u-accent) 45%, transparent);
+}
+.circuit-trace[data-state="faded"],
+.circuit-pad[data-state="faded"] {
+  opacity: 0.22;
+}
+.circuit-pad {
+  fill: var(--u-bg);
+  stroke: color-mix(in srgb, var(--u-text) 45%, transparent);
+  stroke-width: 1.2;
+  transition: opacity 0.3s;
+}
+.circuit-pad[data-state="lit"] {
+  stroke: var(--u-accent);
+}
+.circuit-pulse {
+  fill: none;
+  stroke: var(--u-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: circuit-pulse linear infinite;
+}
+.circuit[data-running="false"] .circuit-pulse {
+  animation-play-state: paused;
+}
+@keyframes circuit-pulse {
+  from {
+    stroke-dashoffset: var(--from);
+  }
+  to {
+    stroke-dashoffset: var(--to);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .circuit-pulse {
+    display: none;
+  }
+}
+
+.circuit-node {
+  outline: none;
+  transition: opacity 0.3s;
+}
+.circuit-node[data-interactive="true"] {
+  cursor: pointer;
+}
+.circuit-node[data-state="faded"] {
+  opacity: 0.4;
+}
+.circuit-body {
+  fill: color-mix(in srgb, var(--u-surface) 70%, var(--u-bg));
+  stroke: color-mix(in srgb, var(--u-text) 30%, transparent);
+  stroke-width: 1.2;
+  transition:
+    stroke 0.3s,
+    fill 0.3s;
+}
+.circuit-node[data-state="active"] .circuit-body {
+  fill: color-mix(in srgb, var(--u-accent) 16%, var(--u-bg));
+  stroke: var(--u-accent);
+  stroke-width: 2;
+}
+.circuit-node[data-state="visited"] .circuit-body {
+  stroke: color-mix(in srgb, var(--u-accent) 60%, transparent);
+}
+.circuit-node:focus-visible .circuit-body {
+  stroke: var(--u-accent);
+  stroke-width: 2.5;
+}
+.circuit-notch {
+  fill: color-mix(in srgb, var(--u-text) 35%, transparent);
+}
+.circuit-ref {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--u-dim);
+}
+.circuit-label {
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--u-text);
+}
+.univers-gufo .circuit-label {
+  font-family: var(--gufo-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.circuit-sublabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--u-dim);
+}
+.circuit-connector {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--u-text);
 }
 
 /* Pac-Man du formulaire de contact : la bouche reste entrouverte, et mâche pendant la frappe. */

@@ -62,7 +62,7 @@ export function SiteHeader() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 sm:pt-5">
-      <div className="glass pointer-events-auto relative mx-auto flex max-w-5xl items-center gap-3 overflow-hidden rounded-full py-2 pr-2 pl-4 sm:gap-6 sm:pl-6">
+      <div className="glass glass-blur pointer-events-auto relative mx-auto flex max-w-5xl items-center gap-3 overflow-hidden rounded-full py-2 pr-2 pl-4 sm:gap-6 sm:pl-6">
         <Link
           href="/"
           aria-label="Accueil"

@@ -134,12 +134,14 @@ function BeforeAfter({ theme, variant }: { theme: ProjectTheme; variant: Variant
         <div className="absolute top-[52%] left-[8%] h-2 w-2/5 rounded-sm bg-white/25" />
 
         {/* Après : le volet balaye la maquette, bleu rivière, pierre claire, ocre. */}
+        {/* Le cadre glisse vers la droite et son contenu vers la gauche d'autant : la
+            maquette « après » reste immobile pendant que le volet la découvre. */}
         <div
-          className="wipe absolute inset-y-0 left-0 w-1/2 overflow-hidden"
+          className="wipe-frame absolute inset-0 overflow-hidden"
           style={{ borderRight: `2px solid ${theme.accent}` }}
         >
           <div
-            className="absolute inset-y-0 left-0 w-[1000px]"
+            className="wipe-content absolute inset-0"
             style={{ background: "linear-gradient(180deg, #0e282c8c, #0e282cd9), #1f4a4f" }}
           >
             <div className="absolute top-[12%] left-4 flex gap-3">
@@ -147,8 +149,8 @@ function BeforeAfter({ theme, variant }: { theme: ProjectTheme; variant: Variant
                 <span key={i} className="h-1.5 w-8 rounded-sm bg-[#f0ece0b3]" />
               ))}
             </div>
-            <div className="absolute top-[30%] left-4 h-4 w-64 rounded-sm bg-[#f0ece0]" />
-            <div className="absolute top-[44%] left-4 h-4 w-48 rounded-sm bg-[#f0ece0]" />
+            <div className="absolute top-[30%] left-4 h-4 w-[70%] rounded-sm bg-[#f0ece0]" />
+            <div className="absolute top-[44%] left-4 h-4 w-[52%] rounded-sm bg-[#f0ece0]" />
             <div className="absolute top-[64%] left-4 h-6 w-24 rounded-full bg-[#d9a441]" />
           </div>
         </div>

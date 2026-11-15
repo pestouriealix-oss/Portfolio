@@ -7,13 +7,17 @@
       "blocks": [
         {
           "id": "web",
+          "kind": "ui",
           "name": "Le site (écrans)",
-          "text": "Tout ce que le joueur voit : pages, morceaux d'écran et textes affichés."
+          "text": "Tout ce que le joueur voit : pages, morceaux d'écran et textes affichés.",
+          "paths": ["src/app", "src/components", "src/i18n"]
         },
         {
           "id": "api",
+          "kind": "service",
           "name": "Adresses du serveur",
-          "text": "Les quelques adresses que le navigateur ou des services extérieurs appellent directement : connexion, paiement, fiche de draft, bilan de partie, Riot Sign On."
+          "text": "Les quelques adresses que le navigateur ou des services extérieurs appellent directement : connexion, paiement, fiche de draft, bilan de partie, Riot Sign On.",
+          "paths": ["src/app/api"]
         }
       ]
     },
@@ -22,18 +26,31 @@
       "blocks": [
         {
           "id": "coach",
+          "kind": "library",
           "name": "Coach IA",
-          "text": "Ce qui fait parler le coach : lecture de la draft, fiche de conseils, bilan de partie, et la façon de demander à Claude."
+          "text": "Ce qui fait parler le coach : lecture de la draft, fiche de conseils, bilan de partie, et la façon de demander à Claude.",
+          "paths": ["src/lib/coach", "src/lib/llm", "src/lib/draft", "src/lib/review"]
         },
         {
           "id": "game",
+          "kind": "library",
           "name": "Données du jeu",
-          "text": "Tout ce qui vient de League of Legends : appels à Riot, images et fiches des champions, synchronisation des parties et calculs de statistiques."
+          "text": "Tout ce qui vient de League of Legends : appels à Riot, images et fiches des champions, synchronisation des parties et calculs de statistiques.",
+          "paths": [
+            "src/lib/riot",
+            "src/lib/ddragon",
+            "src/lib/sync",
+            "src/lib/stats",
+            "src/lib/matchups",
+            "src/lib/live"
+          ]
         },
         {
           "id": "content",
+          "kind": "library",
           "name": "Esport et actus",
-          "text": "Lit les compétitions sur PandaScore et les articles dans des flux RSS publics."
+          "text": "Lit les compétitions sur PandaScore et les articles dans des flux RSS publics.",
+          "paths": ["src/lib/esport", "src/lib/news"]
         }
       ]
     },
@@ -42,13 +59,25 @@
       "blocks": [
         {
           "id": "account",
+          "kind": "library",
           "name": "Comptes, accès et paiement",
-          "text": "Connexion, droits selon l'offre, abonnement Paddle, e-mails et vérification des saisies."
+          "text": "Connexion, droits selon l'offre, abonnement Paddle, e-mails et vérification des saisies.",
+          "paths": [
+            "src/lib/auth",
+            "src/lib/billing",
+            "src/lib/email",
+            "src/lib/validation",
+            "src/lib",
+            "next.config.ts",
+            "eslint.config.mjs"
+          ]
         },
         {
           "id": "data",
+          "kind": "data",
           "name": "Base de données",
-          "text": "Toutes les lectures et écritures en base, une porte par sujet, plus les migrations qui créent les tables."
+          "text": "Toutes les lectures et écritures en base, une porte par sujet, plus les migrations qui créent les tables.",
+          "paths": ["src/lib/db", "drizzle", "drizzle.config.ts"]
         }
       ]
     },
@@ -57,13 +86,17 @@
       "blocks": [
         {
           "id": "jobs",
+          "kind": "script",
           "name": "Tâches et scripts",
-          "text": "Scripts lancés à la main ou chaque nuit : collecte des matchups, coût du modèle, test des flux RSS."
+          "text": "Scripts lancés à la main ou chaque nuit : collecte des matchups, coût du modèle, test des flux RSS.",
+          "paths": ["scripts"]
         },
         {
           "id": "tests",
+          "kind": "test",
           "name": "Tests",
-          "text": "Tests automatiques, rangés à côté du code qu'ils vérifient."
+          "text": "Tests automatiques, rangés à côté du code qu'ils vérifient.",
+          "paths": ["**/*.test.{ts,tsx}", "test", "vitest.config.mts"]
         }
       ]
     }
@@ -71,39 +104,376 @@
   "services": [
     {
       "id": "postgres",
-      "name": "PostgreSQL"
+      "name": "PostgreSQL",
+      "text": "La base de données (Neon en production, Docker en local).",
+      "hosts": []
     },
     {
       "id": "riot",
-      "name": "API Riot"
+      "name": "API Riot",
+      "text": "L'API officielle de League of Legends : comptes, rangs, parties, partie en cours, connexion Riot.",
+      "hosts": ["*.api.riotgames.com", "europe.api.riotgames.com", "auth.riotgames.com"]
     },
     {
       "id": "ddragon",
-      "name": "Data Dragon"
+      "name": "Data Dragon",
+      "text": "Le service de Riot qui fournit images et fiches des champions et objets.",
+      "hosts": ["ddragon.leagueoflegends.com"]
     },
     {
       "id": "anthropic",
-      "name": "Claude (Anthropic)"
+      "name": "Claude (Anthropic)",
+      "text": "Le modèle qui lit les captures et écrit les fiches et les bilans.",
+      "hosts": []
     },
     {
       "id": "pandascore",
-      "name": "PandaScore"
+      "name": "PandaScore",
+      "text": "Les données des compétitions esport.",
+      "hosts": ["api.pandascore.co"]
     },
     {
       "id": "paddle",
-      "name": "Paddle"
+      "name": "Paddle",
+      "text": "Encaisse l'abonnement Premium et prévient le site des paiements.",
+      "hosts": ["api.paddle.com", "sandbox-api.paddle.com"]
     },
     {
       "id": "rss",
-      "name": "Sites d'actualités"
+      "name": "Sites d'actualités",
+      "text": "Les flux RSS publics (Google Actualités et sites esport).",
+      "hosts": [
+        "news.google.com",
+        "www.dexerto.fr",
+        "www.millenium.org",
+        "www.sheepesports.com",
+        "www.esports.net",
+        "www.breakflip.com",
+        "dotesports.com",
+        "www.oneesports.gg",
+        "www.journaldugeek.com",
+        "www.leagueoflegends.com"
+      ]
     },
     {
       "id": "resend",
-      "name": "Resend"
+      "name": "Resend",
+      "text": "Envoie les e-mails du site.",
+      "hosts": []
     },
     {
       "id": "github",
-      "name": "GitHub Actions"
+      "name": "GitHub Actions",
+      "text": "Lance la collecte des matchups chaque nuit à 2 h 17 UTC.",
+      "hosts": []
+    }
+  ],
+  "links": [
+    {
+      "from": "account",
+      "to": "data",
+      "weight": 6,
+      "kinds": ["import"]
+    },
+    {
+      "from": "account",
+      "to": "paddle",
+      "weight": 2,
+      "kinds": ["http"]
+    },
+    {
+      "from": "account",
+      "to": "postgres",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "account",
+      "to": "resend",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "account",
+      "to": "web",
+      "weight": 3,
+      "kinds": ["import"]
+    },
+    {
+      "from": "api",
+      "to": "account",
+      "weight": 10,
+      "kinds": ["import"]
+    },
+    {
+      "from": "api",
+      "to": "coach",
+      "weight": 8,
+      "kinds": ["import"]
+    },
+    {
+      "from": "api",
+      "to": "data",
+      "weight": 3,
+      "kinds": ["import"]
+    },
+    {
+      "from": "api",
+      "to": "game",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "coach",
+      "to": "account",
+      "weight": 21,
+      "kinds": ["import"]
+    },
+    {
+      "from": "coach",
+      "to": "anthropic",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "coach",
+      "to": "data",
+      "weight": 10,
+      "kinds": ["import"]
+    },
+    {
+      "from": "coach",
+      "to": "game",
+      "weight": 20,
+      "kinds": ["import"]
+    },
+    {
+      "from": "coach",
+      "to": "web",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "content",
+      "to": "account",
+      "weight": 4,
+      "kinds": ["import"]
+    },
+    {
+      "from": "content",
+      "to": "pandascore",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "content",
+      "to": "rss",
+      "weight": 3,
+      "kinds": ["http"]
+    },
+    {
+      "from": "data",
+      "to": "account",
+      "weight": 7,
+      "kinds": ["import"]
+    },
+    {
+      "from": "data",
+      "to": "coach",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "data",
+      "to": "game",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "data",
+      "to": "postgres",
+      "weight": 17,
+      "kinds": ["data", "import"]
+    },
+    {
+      "from": "game",
+      "to": "account",
+      "weight": 17,
+      "kinds": ["import"]
+    },
+    {
+      "from": "game",
+      "to": "data",
+      "weight": 4,
+      "kinds": ["import"]
+    },
+    {
+      "from": "game",
+      "to": "ddragon",
+      "weight": 4,
+      "kinds": ["http"]
+    },
+    {
+      "from": "game",
+      "to": "riot",
+      "weight": 2,
+      "kinds": ["http"]
+    },
+    {
+      "from": "game",
+      "to": "rss",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "github",
+      "to": "jobs",
+      "weight": 1,
+      "kinds": ["call"]
+    },
+    {
+      "from": "jobs",
+      "to": "account",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "jobs",
+      "to": "content",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "jobs",
+      "to": "data",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "jobs",
+      "to": "game",
+      "weight": 2,
+      "kinds": ["import"]
+    },
+    {
+      "from": "jobs",
+      "to": "rss",
+      "weight": 9,
+      "kinds": ["http"]
+    },
+    {
+      "from": "paddle",
+      "to": "api",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "riot",
+      "to": "api",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "tests",
+      "to": "account",
+      "weight": 11,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "anthropic",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "coach",
+      "weight": 13,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "content",
+      "weight": 8,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "data",
+      "weight": 24,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "game",
+      "weight": 36,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "postgres",
+      "weight": 1,
+      "kinds": ["import"]
+    },
+    {
+      "from": "tests",
+      "to": "riot",
+      "weight": 6,
+      "kinds": ["http"]
+    },
+    {
+      "from": "tests",
+      "to": "rss",
+      "weight": 5,
+      "kinds": ["http"]
+    },
+    {
+      "from": "web",
+      "to": "account",
+      "weight": 153,
+      "kinds": ["import"]
+    },
+    {
+      "from": "web",
+      "to": "api",
+      "weight": 3,
+      "kinds": ["http"]
+    },
+    {
+      "from": "web",
+      "to": "coach",
+      "weight": 19,
+      "kinds": ["import"]
+    },
+    {
+      "from": "web",
+      "to": "content",
+      "weight": 14,
+      "kinds": ["import"]
+    },
+    {
+      "from": "web",
+      "to": "data",
+      "weight": 30,
+      "kinds": ["import"]
+    },
+    {
+      "from": "web",
+      "to": "ddragon",
+      "weight": 1,
+      "kinds": ["http"]
+    },
+    {
+      "from": "web",
+      "to": "game",
+      "weight": 44,
+      "kinds": ["import"]
+    },
+    {
+      "from": "web",
+      "to": "paddle",
+      "weight": 1,
+      "kinds": ["import"]
     }
   ],
   "journeys": [

@@ -1,15 +1,22 @@
+import type { CircuitInput, CircuitInputNode } from "@/lib/circuit";
 import planData from "./plan.json";
-import statsData from "./stats.json";
 
 /**
- * Données de la fiche Gufo, régénérées par `npm run gufo:sync` (scripts/sync-gufo.mjs) :
- * le plan vient de la carte du code, les chiffres du dépôt lui-même. Ce module
- * ne fait que les typer et les mettre en forme ; il n'importe rien côté serveur,
- * le plan interactif (composant client) peut donc le lire.
+ * Données de la fiche Gufo, régénérées par `npm run gufo:sync` (scripts/sync-gufo.mjs)
+ * à partir de la carte du code de Gufo. Ce module ne fait que les typer et les
+ * préparer pour le schéma de circuit.
  */
-export type PlanBlock = { id: string; name: string; text: string };
+export type PlanBlock = {
+  id: string;
+  /** Type donné par la carte : ui, service, library, data, script, test. */
+  kind: string;
+  name: string;
+  text: string;
+  paths: string[];
+};
 export type PlanLayer = { name: string; blocks: PlanBlock[] };
-export type PlanService = { id: string; name: string };
+export type PlanService = { id: string; name: string; text: string; hosts: string[] };
+export type PlanLink = { from: string; to: string; weight: number; kinds: string[] };
 export type PlanStep = { node: string; text: string };
 export type PlanJourney = { id: string; name: string; steps: PlanStep[] };
 export type GufoPlanData = {
@@ -17,55 +24,62 @@ export type GufoPlanData = {
   generatedAt: string;
   layers: PlanLayer[];
   services: PlanService[];
+  links: PlanLink[];
   journeys: PlanJourney[];
 };
 
-export type GufoStats = {
-  measuredAt: string;
-  linesOfCode: number;
-  tests: number;
-  testFiles: number;
-  pages: number;
-  apiRoutes: number;
-  tables: number;
-  migrations: number;
-};
-
 export const gufoPlan: GufoPlanData = planData;
-export const gufoStats: GufoStats = statsData;
 
-const number = new Intl.NumberFormat("fr-FR");
+/** La carte complète, exportée telle quelle dans public/ par le script de synchronisation. */
+export const GUFO_MAP_URL = "/cartes/gufo.html";
+
 const longDate = new Intl.DateTimeFormat("fr-FR", {
   day: "numeric",
   month: "long",
   year: "numeric",
 });
 
-/** « 24 455 », avec l'espace insécable des milliers. */
-export const formatNumber = (n: number) => number.format(n);
-/** « 7 novembre 2026 », à partir d'une date AAAA-MM-JJ. */
+/** « 5 novembre 2026 », à partir d'une date AAAA-MM-JJ. */
 export const formatDay = (iso: string) => longDate.format(new Date(`${iso}T12:00:00Z`));
 
-/** Les quatre chiffres de la fiche, avec leur source. */
-export const gufoFigures = {
-  items: [
-    { value: formatNumber(gufoStats.linesOfCode), label: "lignes de TypeScript, hors tests" },
-    {
-      value: formatNumber(gufoStats.tests),
-      label: `tests automatisés, dans ${gufoStats.testFiles} fichiers`,
-      accent: true,
-    },
-    {
-      value: formatNumber(gufoStats.pages),
-      label: "pages, dont l'esport, les actus et la progression",
-    },
-    {
-      value: formatNumber(gufoStats.tables),
-      label: `tables PostgreSQL, créées par ${gufoStats.migrations} migrations`,
-    },
-  ],
-  source: `Mesuré dans le dépôt le ${formatDay(gufoStats.measuredAt)}.`,
-};
+/**
+ * Le schéma montre le code qui tourne : les tests, qui importent presque tout,
+ * le rendraient illisible sans rien apprendre de l'architecture.
+ */
+const shownBlocks = (layer: PlanLayer) => layer.blocks.filter((block) => block.kind !== "test");
 
-/** Arrondi au millier inférieur pour une phrase : « 24 000 ». */
-export const gufoLinesRounded = formatNumber(Math.floor(gufoStats.linesOfCode / 1000) * 1000);
+/** Entrée du schéma de circuit : un étage par couche de la carte, les services en bordure. */
+export function gufoCircuitInput(plan: GufoPlanData = gufoPlan): CircuitInput {
+  const rows = plan.layers
+    .map((layer) => ({
+      name: layer.name,
+      nodes: shownBlocks(layer).map((block): CircuitInputNode => ({
+        id: block.id,
+        label: block.name,
+        sublabel: block.paths[0],
+        text: block.text,
+        details: block.paths,
+      })),
+    }))
+    .filter((row) => row.nodes.length > 0);
+
+  const shown = new Set([
+    ...rows.flatMap((row) => row.nodes.map((node) => node.id)),
+    ...plan.services.map((service) => service.id),
+  ]);
+
+  return {
+    rows,
+    connectors: {
+      name: "Services",
+      nodes: plan.services.map((service) => ({
+        id: service.id,
+        label: service.name,
+        text: service.text,
+        details: service.hosts,
+      })),
+    },
+    links: plan.links.filter((link) => shown.has(link.from) && shown.has(link.to)),
+    journeys: plan.journeys,
+  };
+}

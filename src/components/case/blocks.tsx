@@ -6,46 +6,32 @@ import type { ReactNode } from "react";
  * du projet (`--u-*`), donc s'adaptent à chaque fiche sans réglage.
  */
 
-type PitchItem = { label: string; title: string; text: string };
+type Spec = { term: string; text: string; source?: string };
 
-/** Le problème, la question, la réponse : trois cartes en tête de fiche. */
-export function Pitch({ items }: { items: PitchItem[] }) {
+/**
+ * Fiche technique : un mécanisme par ligne, ce qu'il fait, et le fichier qui
+ * le met en œuvre dans le dépôt du projet.
+ */
+export function Specs({ items }: { items: Spec[] }) {
   return (
-    <div className="mt-14! grid gap-4 md:grid-cols-3">
+    <dl className="border-t border-(--u-line)">
       {items.map((item) => (
-        <section key={item.label} className="glass lift reveal rounded-3xl p-6 sm:p-7">
-          <p className="font-mono text-xs text-(--u-accent)">{item.label}</p>
-          <h3 className="case-title mt-2.5 text-2xl leading-tight font-semibold tracking-[-0.025em]">
-            {item.title}
-          </h3>
-          <p className="mt-3 text-(--u-dim)">{item.text}</p>
-        </section>
+        <div
+          key={item.term}
+          className="grid gap-1.5 border-b border-(--u-line) py-4 sm:grid-cols-[minmax(0,13rem)_1fr] sm:gap-8"
+        >
+          <dt className="font-mono text-xs leading-6 text-(--u-accent)">{item.term}</dt>
+          <dd className="text-[15px] leading-relaxed text-(--u-text)">
+            {item.text}
+            {item.source ? (
+              <code className="mt-1.5 block font-mono text-[11px] break-all text-(--u-dim)">
+                {item.source}
+              </code>
+            ) : null}
+          </dd>
+        </div>
       ))}
-    </div>
-  );
-}
-
-type Figure = { value: string; label: string; accent?: boolean };
-
-/** Les chiffres mesurés du projet, avec leur source. Jamais d'estimation ici. */
-export function Figures({ items, source }: { items: Figure[]; source: string }) {
-  return (
-    <figure>
-      <dl className="grid gap-px overflow-hidden rounded-3xl border border-(--u-line) bg-(--u-line) sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((item) => (
-          <div key={item.label} className="bg-(--u-bg) p-6 sm:p-7">
-            <dd
-              className="figure-value text-5xl leading-none font-[650] tracking-[-0.04em]"
-              style={item.accent ? { color: "var(--u-accent)" } : undefined}
-            >
-              {item.value}
-            </dd>
-            <dt className="mt-3 text-(--u-dim)">{item.label}</dt>
-          </div>
-        ))}
-      </dl>
-      <figcaption className="mt-3 font-mono text-[11px] text-(--u-dim)">{source}</figcaption>
-    </figure>
+    </dl>
   );
 }
 
@@ -86,26 +72,6 @@ export function Flow({ steps, label }: { steps: FlowStep[]; label: string }) {
           </li>
         ))}
       </ol>
-    </div>
-  );
-}
-
-type Choice = { tag: string; title: string; text: string };
-
-/** Les choix d'ingénieur, rangés par thème (sécurité, coût, fiabilité…). */
-export function Choices({ items }: { items: Choice[] }) {
-  return (
-    <div className="grid gap-3.5 md:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <section
-          key={item.title}
-          className="lift reveal rounded-[20px] border border-(--u-line) bg-(--u-surface) p-6"
-        >
-          <p className="font-mono text-xs text-(--u-accent)">{item.tag}</p>
-          <h3 className="mt-2 text-lg leading-snug font-bold text-(--u-text)">{item.title}</h3>
-          <p className="mt-2 text-[15px] text-(--u-dim)">{item.text}</p>
-        </section>
-      ))}
     </div>
   );
 }
