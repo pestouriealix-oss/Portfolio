@@ -30,7 +30,7 @@ export const experience: TimelineEntry[] = [
     title: "Projet solidaire à l'Association d'Entraide du Calaisis",
     place: "Calais",
     description:
-      "Bénévolat en équipe de quatre dans une association d'aide alimentaire : dix samedis matin, environ trente heures chacun, à décharger les camions, trier les denrées et préparer la distribution réservée aux étudiants.",
+      "Bénévolat en équipe de quatre dans une association d'aide alimentaire : dix samedis matin, environ trente heures chacun, à décharger les camions, trier les denrées et préparer la distribution réservée aux étudiants. Nous avons aussi proposé à l'association des solutions pour mieux suivre et gérer son stock de denrées.",
   },
 ];
 
@@ -51,10 +51,10 @@ export const formation: TimelineEntry[] = [
   },
   {
     period: "2022 – 2025",
-    title: "Classe préparatoire TSI",
+    title: "Classe préparatoire aux grandes écoles (CPGE)",
     place: "Lycée Léonce Vieljeux, La Rochelle",
     description:
-      "Mathématiques, physique et sciences de l'ingénieur. TIPE sur l'atténuation de la fibre optique et les phénomènes de diffusion.",
+      "Filière TSI (technologie et sciences industrielles) : mathématiques, physique et sciences de l'ingénieur. TIPE sur l'atténuation de la fibre optique et les phénomènes de diffusion.",
   },
   {
     period: "2019 – 2022",
