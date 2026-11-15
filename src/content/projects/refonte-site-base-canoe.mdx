@@ -39,13 +39,14 @@ regroupe tout au même endroit.
 Sur téléphone, une barre fixe en bas de l'écran garde toujours à portée les deux actions qui
 comptent pour un client : appeler et réserver.
 
-## Choix techniques
+## Architecture
 
-- React et TypeScript, avec TanStack Start pour le routage et les fonctions serveur.
-- Supabase pour la base PostgreSQL et l'authentification. Les règles d'accès sont dans la
-  base elle-même : un visiteur peut créer une réservation, seul un administrateur peut les
-  lire.
-- Stripe Checkout pour le paiement.
+React et TypeScript avec TanStack Start, qui sert à la fois le routage et les fonctions serveur.
+Supabase porte la base PostgreSQL et l'authentification, Stripe Checkout le paiement. Les règles
+d'accès sont dans la base elle-même : un visiteur peut créer une réservation, seul un
+administrateur peut les lire.
+
+<Architecture project="canoe" />
 
 ## État d'avancement
 

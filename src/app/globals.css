@@ -524,12 +524,16 @@
   fill: var(--u-dim);
 }
 .circuit-label {
-  font-family: var(--gufo-display, var(--font-sans));
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--u-text);
+}
+.univers-gufo .circuit-label {
+  font-family: var(--gufo-display);
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  fill: var(--u-text);
 }
 .circuit-sublabel {
   font-family: var(--font-mono);

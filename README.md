@@ -63,7 +63,7 @@ export const metadata = {
 Le schéma est dans `src/lib/projects.ts`. Un champ invalide fait échouer `npm run build`, donc la CI.
 Ajoute `draft: true` tant qu'une fiche est incomplète : un bandeau l'indique et la page n'est pas indexée. `date` est facultative.
 
-Les briques disponibles dans un fichier MDX, sans import : `Specs` (fiche technique : un mécanisme par ligne et le fichier qui le met en œuvre), `Flow` (chaîne d'étapes), `Caption`, `Note`, et pour Gufo `GufoArchitecture` et `DraftDemo`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
+Les briques disponibles dans un fichier MDX, sans import : `Specs` (fiche technique : un mécanisme par ligne et le fichier qui le met en œuvre), `Flow` (chaîne d'étapes), `Caption`, `Note`, `Architecture` (schéma de circuit d'un projet, déclaré dans `src/components/case/architecture.tsx` ; données dans `src/content/architectures/` ou, pour Gufo, la carte du code), et pour Gufo `DraftDemo`. L'univers du projet (couleurs, image animée, police de titre) se déclare dans `src/content/project-themes.ts`, sous le nom du fichier.
 
 ### Mettre à jour la fiche Gufo
 

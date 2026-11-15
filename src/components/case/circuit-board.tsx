@@ -423,7 +423,7 @@ function NodeDetails({
     <div className="grid gap-5 md:grid-cols-[1.2fr_1fr]">
       <div>
         <p className="font-mono text-xs text-(--u-accent)">
-          {node.ref} · {node.kind === "chip" ? "bloc du code" : "service extérieur"}
+          {node.ref} · {node.kind === "chip" ? "bloc du code" : "hors du code"}
         </p>
         <p className="case-title mt-1 text-2xl font-bold text-(--u-text)">{node.label}</p>
         <p className="mt-2 text-[15px] text-(--u-dim)">{node.text}</p>
@@ -464,11 +464,13 @@ function Legend() {
       </div>
       <div>
         <dt className="text-(--u-text)">J · connecteur</dt>
-        <dd>un service extérieur</dd>
+        <dd>ce que le code utilise au-dehors : service, système</dd>
       </div>
       <div>
         <dt className="text-(--u-text)">piste</dt>
-        <dd>imports et appels réseau ; l&apos;impulsion va de l&apos;appelant à l&apos;appelé</dd>
+        <dd>
+          une dépendance entre deux blocs ; l&apos;impulsion va de l&apos;appelant à l&apos;appelé
+        </dd>
       </div>
     </dl>
   );

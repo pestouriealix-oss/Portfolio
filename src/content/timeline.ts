@@ -16,14 +16,14 @@ export const experience: TimelineEntry[] = [
     title: "Cofondateur d'ULTRA.Digital",
     place: "Bordeaux / Lisbonne",
     description:
-      "Société de création de sites web : sites vitrines et boutiques en ligne pour des entreprises et des indépendants. J'y ai accompagné les clients de la définition de leur besoin à la mise en ligne, en suivant les développements et en validant les livrables.",
+      "Société de création de sites web et de solutions digitales sur mesure : sites vitrines et boutiques en ligne pour des entreprises et des indépendants. J'y ai accompagné les clients de la définition de leur besoin à la mise en ligne, en suivant les développements et en validant les livrables.",
   },
   {
     period: "Été 2026",
     title: "Emploi saisonnier dans une base de canoë",
     place: "Saint-Julien-de-Lampon, Dordogne",
     description:
-      "Un mois et demi en poste polyvalent : accueil des clients, gestion de l'affluence sur la base, conduite des navettes.",
+      "Un mois et demi en poste polyvalent : refonte du site web de la base, accueil des clients, gestion de l'affluence sur la base, conduite des navettes.",
   },
   {
     period: "Janvier – mai 2026",

@@ -33,17 +33,11 @@ avertissement avec `-Wall -Wextra`.
 
 ## Architecture
 
-Environ 2 500 lignes réparties en modules, chacun avec une seule responsabilité :
+Environ 2 500 lignes réparties en six modules, chacun avec une seule responsabilité. Les
+dépendances descendent : l'affichage lance les parties, la boucle de jeu orchestre les grilles,
+la flotte et la sauvegarde.
 
-```text
-                 main.c
-                    │
-              affichage  (menus, couleurs, saisies)
-                    │
-                  jeu     (tours, victoire, adversaire)
-        ┌───────────┼───────────┐
-     grille      bateau     sauvegarde
-```
+<Architecture project="bataille-navale" />
 
 ## Ma contribution
 
